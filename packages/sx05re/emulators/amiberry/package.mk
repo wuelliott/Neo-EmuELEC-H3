@@ -24,6 +24,9 @@ pre_configure_target() {
     Amlogic-ng)
         AMIBERRY_PLATFORM="AMLG12B"
       ;;
+    H3)
+        AMIBERRY_PLATFORM="orangepi-pc"
+      ;;
   esac
  
 if [ "$DEVICE" == "OdroidGoAdvance" ]; then

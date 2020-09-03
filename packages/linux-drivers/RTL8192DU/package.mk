@@ -13,6 +13,15 @@ PKG_NEED_UNPACK="$LINUX_DEPENDS"
 PKG_LONGDESC="Realtek RTL8192DU Linux 3.x driver"
 PKG_IS_KERNEL_PKG="yes"
 
+
+if [ "$PROJECT" = "H3" ]; then
+PKG_VERSION="9e7eb15"
+PKG_SITE="https://github.com/lwfinger/rtl8192du"
+PKG_URL="https://github.com/lwfinger/rtl8192du/archive/$PKG_VERSION.tar.gz"
+PKG_SOURCE_DIR="rtl8192du-$PKG_VERSION*"
+PKG_SHA256="aa386479291fff3e9fe341d5a682b692a7a098d833be5eaa718e1b6ecfd8e167"
+fi
+PKG_PATCH_DIRS="${PROJECT}"
 pre_make_target() {
   unset LDFLAGS
 }
@@ -26,6 +35,6 @@ make_target() {
 }
 
 makeinstall_target() {
-  mkdir -p $INSTALL/$(get_full_module_dir)/$PKG_NAME
-    cp *.ko $INSTALL/$(get_full_module_dir)/$PKG_NAME
+  mkdir -p $INSTALL/usr/lib/modules/3.4.113/$PKG_NAME
+    cp *.ko $INSTALL/usr/lib/modules/3.4.113/$PKG_NAME
 }

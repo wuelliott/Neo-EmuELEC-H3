@@ -14,6 +14,7 @@ PKG_LONGDESC="PPSSPP Standalone"
 GET_HANDLER_SUPPORT="git"
 PKG_BUILD_FLAGS="+lto"
 
+
 PKG_CMAKE_OPTS_TARGET+="-DUSE_SYSTEM_FFMPEG=ON \
                         -DARMV7=ON \
                         -DUSING_FBDEV=ON \
@@ -21,6 +22,18 @@ PKG_CMAKE_OPTS_TARGET+="-DUSE_SYSTEM_FFMPEG=ON \
                         -DUSING_GLES2=ON \
                         -DUSING_X11_VULKAN=OFF \
                         -DUSE_DISCORD=OFF"
+
+#-----H3
+if [ "$PROJECT" = "H3" ]; then
+PKG_CMAKE_OPTS_TARGET+="-DUSE_SYSTEM_FFMPEG=ON \
+                        -DARMV7=ON \
+                        -DUSING_FBDEV=ON \
+                        -DUSING_EGL=OFF \
+                        -DUSING_GLES2=ON \
+                        -DUSING_X11_VULKAN=OFF \
+                        -DUSE_DISCORD=OFF"
+fi
+#-----H3 END
 
 pre_configure_target() {
 if [ "$DEVICE" == "OdroidGoAdvance" ]; then

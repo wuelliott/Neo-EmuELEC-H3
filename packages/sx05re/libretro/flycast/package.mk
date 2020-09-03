@@ -41,7 +41,11 @@ pre_make_target() {
       ;;
     Amlogic)
       PKG_MAKE_OPTS_TARGET+=" platform=AMLGX"
-    ;;  
+    ;; 
+    H3)
+      PKG_MAKE_OPTS_TARGET+=" platform=sun8i"
+
+    ;;   
   esac
   
  if [ "$DEVICE" == "OdroidGoAdvance" ]; then

@@ -13,6 +13,23 @@ PKG_NEED_UNPACK="$LINUX_DEPENDS"
 PKG_LONGDESC="Realtek RTL8812AU Linux 3.x driver"
 PKG_IS_KERNEL_PKG="yes"
 
+if [ "$PROJECT" = "H3" ]; then
+PKG_PATCH_DIRS="patches_h3"
+PKG_VERSION="4.3.20"
+PKG_ARCH="any"
+PKG_LICENSE="GPL"
+PKG_SITE="https://github.com/Grawp/rtl8812au_rtl8821au"
+PKG_URL="https://github.com/Grawp/rtl8812au_rtl8821au/archive/$PKG_VERSION.tar.gz"
+PKG_SOURCE_DIR="rtl8812au_rtl8821au-$PKG_VERSION"
+PKG_DEPENDS_TARGET="toolchain linux"
+PKG_NEED_UNPACK="$LINUX_DEPENDS"
+PKG_SECTION="driver"
+PKG_SHORTDESC="Realtek RTL8812AU Linux 3.x driver"
+PKG_LONGDESC="Realtek RTL8812AU Linux 3.x driver"
+PKG_IS_ADDON="no"
+PKG_AUTORECONF="no"
+PKG_SHA256="04f458b14114bcb9d12f9d353c55fddaa93a89e6f7a294563413ed4630c25409"
+fi
 pre_make_target() {
   unset LDFLAGS
 }
@@ -26,6 +43,6 @@ make_target() {
 }
 
 makeinstall_target() {
-  mkdir -p $INSTALL/$(get_full_module_dir)/$PKG_NAME
-    cp *.ko $INSTALL/$(get_full_module_dir)/$PKG_NAME
+  mkdir -p $INSTALL/usr/lib/modules/3.4.113/$PKG_NAME
+    cp *.ko $INSTALL/usr/lib/modules/3.4.113/$PKG_NAME
 }

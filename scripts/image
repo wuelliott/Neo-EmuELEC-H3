@@ -142,8 +142,12 @@ if [ "${TARGET_ARCH}" = "x86_64" ]; then
   ln -sfn /usr/lib ${INSTALL}/usr/lib64
 fi
 
-echo "${TARGET_VERSION}" > ${INSTALL}/etc/release
 
+echo "${TARGET_VERSION}" > ${INSTALL}/etc/release
+#--H3
+TARGET_VERSION_NOTE="Taipei Taiwan (Matthew Wang 2020)"
+echo "${TARGET_VERSION_NOTE}" >> ${INSTALL}/etc/release
+#--H3 END
 # Create /etc/os-release
 cat <<EOF >${INSTALL}/etc/os-release
 NAME="${DISTRONAME}"
@@ -151,7 +155,7 @@ VERSION="${LIBREELEC_VERSION}"
 ID="coreelec"
 VERSION_ID="${OS_VERSION}"
 PRETTY_NAME="${DISTRONAME} (${LIBREELEC_BUILD}): ${LIBREELEC_VERSION}"
-HOME_URL="https://github.com/EmuELEC"
+HOME_URL="https://github.com/asakous/Neo-EmuELEC-H3"
 BUG_REPORT_URL="${ORIGIN_URL}"
 BUILD_ID="${GIT_HASH}"
 OPENELEC_ARCH="${LIBREELEC_ARCH}"
@@ -207,22 +211,30 @@ if [ -n "${DEVICE}" -a -d "${PROJECT_DIR}/${PROJECT}/devices/${DEVICE}/filesyste
 fi
 
 # Run depmod for base overlay modules
-MODVER=$(basename $(ls -d ${INSTALL}/usr/lib/kernel-overlays/base/lib/modules/*))
-find ${INSTALL}/usr/lib/kernel-overlays/base/lib/modules/${MODVER}/ -name *.ko | \
-  sed -e "s,${INSTALL}/usr/lib/kernel-overlays/base/lib/modules/${MODVER}/,," \
-    > ${INSTALL}/usr/lib/kernel-overlays/base/lib/modules/${MODVER}/modules.order
-${TOOLCHAIN}/bin/depmod -b ${INSTALL}/usr/lib/kernel-overlays/base -a -e -F "${BUILD}/linux-$(kernel_version)/System.map" ${MODVER} 2>&1
+#MODVER=$(basename $(ls -d ${INSTALL}/usr/lib/kernel-overlays/base/lib/modules/*))
+#find ${INSTALL}/usr/lib/kernel-overlays/base/lib/modules/${MODVER}/ -name *.ko | \
+#  sed -e "s,${INSTALL}/usr/lib/kernel-overlays/base/lib/modules/${MODVER}/,," \
+#    > ${INSTALL}/usr/lib/kernel-overlays/base/lib/modules/${MODVER}/modules.order
+#${TOOLCHAIN}/bin/depmod -b ${INSTALL}/usr/lib/kernel-overlays/base -a -e -F "${BUILD}/linux-$(kernel_version)/System.map" ${MODVER} 2>&1
 
+MODVER=$(basename $(ls -d $INSTALL/usr/lib/modules/*))
+find $INSTALL/usr/lib/modules/$MODVER/ -name *.ko | \
+  sed -e "s,$INSTALL/usr/lib/modules/$MODVER/,," > $INSTALL/usr/lib/modules/$MODVER/modules.order
+$TOOLCHAIN/bin/depmod -b $INSTALL/usr -a -e -F "$BUILD/linux-$(kernel_version)/System.map" $MODVER
+
+
+#---H3
 # Strip kernel modules
-for MOD in $(find ${INSTALL}/usr/lib/kernel-overlays/ -type f -name *.ko); do
-  ${TARGET_KERNEL_PREFIX}strip --strip-debug ${MOD}
-done
+#for MOD in $(find ${INSTALL}/usr/lib/kernel-overlays/ -type f -name *.ko); do
+#  ${TARGET_KERNEL_PREFIX}strip --strip-debug ${MOD}
+#done
 
 # Symlink overlayed modules to /usr/lib/modules
-ln -sT /var/lib/modules ${INSTALL}/usr/lib/modules
+#ln -sT /var/lib/modules ${INSTALL}/usr/lib/modules
 
 # Symlink overlayed firmware to /usr/lib/firmware
-ln -sT /var/lib/firmware ${INSTALL}/usr/lib/firmware
+#ln -sT /var/lib/firmware ${INSTALL}/usr/lib/firmware
+#---H3 END
 
 # Make target dir
 mkdir -p ${TARGET_IMG}
@@ -275,11 +287,26 @@ if [ "${1}" = "release" -o "${1}" = "mkimage" -o "${1}" = "noobs" ]; then
       cp -R ${BOOTLOADER_DIR}/files/* ${RELEASE_DIR}
     fi
 
-    if find_file_path bootloader/release ${BOOTLOADER_DIR}/release; then
-      echo "Running ${FOUND_PATH}"
-      . ${FOUND_PATH}
-    fi
+    #if find_file_path bootloader/release ${BOOTLOADER_DIR}/release; then
+    #  echo "Running ${FOUND_PATH}"
+    #  . ${FOUND_PATH}
+    #fi
   fi
+#------------H3
+if [ $PROJECT = "H3" ]; then
+mkdir -p $RELEASE_DIR/3rdparty/bootloader
+  UBOOT_CONFIGFILE="boot.scr"
+  cp -PR $BUILD/u-boot-*/$UBOOT_CONFIGFILE $RELEASE_DIR/3rdparty/bootloader
+  mcopy $RELEASE_DIR/3rdparty/bootloader/boot.scr $RELEASE_DIR/
+
+
+cp -PR $BUILD/u-boot-*/uboot-sunxi-*.bin $RELEASE_DIR/3rdparty/bootloader 2>/dev/null
+cp -PR $BUILD/linux-*/*.fex $RELEASE_DIR/3rdparty/bootloader 2>/dev/null || :
+   mcopy $RELEASE_DIR/3rdparty/bootloader/$UBOOT_SYSTEM.fex $RELEASE_DIR/script.bin
+fi
+#------------H3 END
+
+
 
   cp ${ROOT}/README* ${RELEASE_DIR}
   cp ${ROOT}/CHANGELOG* ${RELEASE_DIR}

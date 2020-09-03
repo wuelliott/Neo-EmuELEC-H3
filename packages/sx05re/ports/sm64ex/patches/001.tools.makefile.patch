@@ -1,0 +1,44 @@
+diff -Naur old/Makefile new/Makefile
+--- old/Makefile	2020-08-26 15:09:14.000000000 +0800
++++ new/Makefile	2020-08-26 18:14:25.299037768 +0800
+@@ -358,6 +358,8 @@
+         endif
+ endif
+ 
++OPT_FLAGS := -march=armv7ve -mtune=cortex-a7 -mfpu=neon-vfpv4 -O2 -mfloat-abi=hard
++
+ # File dependencies and variables for specific files
+ include Makefile.split
+ 
+@@ -537,7 +539,7 @@
+ endif
+ 
+ PYTHON := python3
+-SDLCONFIG := $(CROSS)sdl2-config
++SDLCONFIG := $(SYSROOT_PREFIX)/usr/bin/sdl2-config
+ 
+ # configure backend flags
+ 
+diff -Naur old/tools/audiofile/Makefile new/tools/audiofile/Makefile
+--- old/tools/audiofile/Makefile	2020-08-26 15:09:14.000000000 +0800
++++ new/tools/audiofile/Makefile	2020-08-26 17:13:51.365406394 +0800
+@@ -1,4 +1,4 @@
+-CXX := g++
++CXX = $(HOST_CXX)
+ 
+ libaudiofile.a: audiofile.o
+ 	ar rcs libaudiofile.a audiofile.o
+diff -Naur old/tools/Makefile new/tools/Makefile
+--- old/tools/Makefile	2020-08-26 15:09:14.000000000 +0800
++++ new/tools/Makefile	2020-08-26 17:23:57.924598176 +0800
+@@ -11,8 +11,8 @@
+   OPT_FLAG := -O2
+ endif
+ 
+-CC := gcc
+-CXX := g++
++CC := $(HOST_CC)
++CXX := $(HOST_CXX)
+ CFLAGS := -Llib -Iinclude -I../include -I . -Wall -Wextra -Wno-unused-parameter $(OSX_BUILD) -pedantic -std=c99 $(OPT_FLAG) -s
+ PROGRAMS := n64graphics n64graphics_ci mio0 n64cksum textconv patch_libultra_math iplfontutil aifc_decode aiff_extract_codebook vadpcm_enc tabledesign extract_data_for_mio skyconv
+ 

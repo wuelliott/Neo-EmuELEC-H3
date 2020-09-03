@@ -1,75 +1,195 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
-# Copyright (C) 2017-present Team LibreELEC (https://libreelec.tv)
+################################################################################
+#      This file is part of OpenELEC - http://www.openelec.tv
+#      Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+#
+#  OpenELEC is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  OpenELEC is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
+################################################################################
 
 PKG_NAME="u-boot"
+PKG_DEPENDS_TARGET="toolchain"
+if [ "$UBOOT_VERSION" = "imx6-cuboxi" ]; then
+  PKG_COMMIT="c8d1200"
+  PKG_VERSION="imx6-$PKG_COMMIT"
+  PKG_SITE="http://solid-run.com/wiki/doku.php?id=products:imx6:software:development:u-boot"
+  PKG_URL="https://github.com/SolidRun/u-boot-imx6/archive/$PKG_COMMIT.tar.gz"
+  PKG_SOURCE_NAME="$PKG_NAME-sr-$PKG_VERSION.tar.gz"
+  PKG_SOURCE_DIR="$PKG_NAME-imx6-${PKG_COMMIT}*"
+  [ -n "$UBOOT_CONFIG_V2" ] && PKG_DEPENDS_TARGET="toolchain u-boot-v2"
+elif [ "$UBOOT_VERSION" = "hardkernel" ]; then
+  PKG_VERSION="6e4e886"
+  PKG_SITE="https://github.com/hardkernel/u-boot"
+  PKG_URL="https://github.com/hardkernel/u-boot/archive/$PKG_VERSION.tar.gz"
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET gcc-linaro-aarch64-elf:host gcc-linaro-arm-eabi:host"
+elif [ "$UBOOT_VERSION" = "sunxi" -o "$UBOOT_VERSION" = "sun8i"  ]; then
+  PKG_VERSION="2017.01"
+  PKG_SITE="http://www.denx.de/wiki/U-Boot/WebHome"
+  PKG_URL="ftp://ftp.denx.de/pub/u-boot/$PKG_NAME-$PKG_VERSION.tar.bz2"
+else
+  exit 0
+fi
 PKG_ARCH="arm aarch64"
 PKG_LICENSE="GPL"
-PKG_SITE="https://www.denx.de/wiki/U-Boot"
-PKG_DEPENDS_TARGET="toolchain swig:host"
-PKG_LONGDESC="Das U-Boot is a cross-platform bootloader for embedded systems."
+PKG_SECTION="tools"
+PKG_SHORTDESC="u-boot: Universal Bootloader project"
+PKG_LONGDESC="Das U-Boot is a cross-platform bootloader for embedded systems, used as the default boot loader by several board vendors. It is intended to be easy to port and to debug, and runs on many supported architectures, including PPC, ARM, MIPS, x86, m68k, NIOS, and Microblaze."
+PKG_IS_ADDON="no"
+PKG_AUTORECONF="no"
+if [ "$UBOOT_VERSION" = "sunxi" -o "$UBOOT_VERSION" = "sun8i" ]; then
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET Python2:host"
+fi
 
-PKG_IS_KERNEL_PKG="yes"
-PKG_STAMP="$UBOOT_SYSTEM"
+ROOT=""
 
-[ -n "$ATF_PLATFORM" ] && PKG_DEPENDS_TARGET+=" atf"
-
-PKG_NEED_UNPACK="$PROJECT_DIR/$PROJECT/bootloader"
-[ -n "$DEVICE" ] && PKG_NEED_UNPACK+=" $PROJECT_DIR/$PROJECT/devices/$DEVICE/bootloader"
-
-case "$PROJECT" in
-  Rockchip)
-    PKG_VERSION="8659d08d2b589693d121c1298484e861b7dafc4f"
-    PKG_SHA256="3f9f2bbd0c28be6d7d6eb909823fee5728da023aca0ce37aef3c8f67d1179ec1"
-    PKG_URL="https://github.com/rockchip-linux/u-boot/archive/$PKG_VERSION.tar.gz"
-    PKG_PATCH_DIRS="rockchip"
-    PKG_DEPENDS_TARGET+=" rkbin"
-    PKG_NEED_UNPACK+=" $(get_pkg_directory rkbin)"
-    ;;
-  *)
-    PKG_VERSION="2019.04"
-    PKG_SHA256="76b7772d156b3ddd7644c8a1736081e55b78828537ff714065d21dbade229bef"
-    PKG_URL="http://ftp.denx.de/pub/u-boot/u-boot-$PKG_VERSION.tar.bz2"
-    ;;
-esac
-
-post_patch() {
-  if [ -n "$UBOOT_SYSTEM" ] && find_file_path bootloader/config; then
-    PKG_CONFIG_FILE="$PKG_BUILD/configs/$($ROOT/$SCRIPTS/uboot_helper $PROJECT $DEVICE $UBOOT_SYSTEM config)"
-    if [ -f "$PKG_CONFIG_FILE" ]; then
-      cat $FOUND_PATH >> "$PKG_CONFIG_FILE"
-    fi
+pre_configure_target() {
+  if [ -z "$UBOOT_CONFIG" ]; then
+    echo "$TARGET_PLATFORM does not define any u-boot configuration, aborting."
+    echo "Please add UBOOT_CONFIG to your project options file."
+    exit 1
   fi
+
+  if [ -z "$UBOOT_CONFIGFILE" ]; then
+    UBOOT_CONFIGFILE="boot.scr"
+  fi
+
+  unset LDFLAGS
+
+# dont build in parallel because of problems
+  MAKEFLAGS=-j1
+
+# copy compiler-gcc5.h to compiler-gcc6. for fake building
+#  cp include/linux/compiler-gcc5.h include/linux/compiler-gcc6.h
 }
 
 make_target() {
-  if [ -z "$UBOOT_SYSTEM" ]; then
-    echo "UBOOT_SYSTEM must be set to build an image"
-    echo "see './scripts/uboot_helper' for more information"
-  else
-    [ "${BUILD_WITH_DEBUG}" = "yes" ] && PKG_DEBUG=1 || PKG_DEBUG=0
-    [ -n "$ATF_PLATFORM" ] &&  cp -av $(get_build_dir atf)/bl31.bin .
-    DEBUG=${PKG_DEBUG} CROSS_COMPILE="$TARGET_KERNEL_PREFIX" LDFLAGS="" ARCH=arm make mrproper
-    DEBUG=${PKG_DEBUG} CROSS_COMPILE="$TARGET_KERNEL_PREFIX" LDFLAGS="" ARCH=arm make $($ROOT/$SCRIPTS/uboot_helper $PROJECT $DEVICE $UBOOT_SYSTEM config)
-    DEBUG=${PKG_DEBUG} CROSS_COMPILE="$TARGET_KERNEL_PREFIX" LDFLAGS="" ARCH=arm _python_sysroot="$TOOLCHAIN" _python_prefix=/ _python_exec_prefix=/ make HOSTCC="$HOST_CC" HOSTLDFLAGS="-L$TOOLCHAIN/lib" HOSTSTRIP="true" CONFIG_MKIMAGE_DTC_PATH="scripts/dtc/dtc"
-  fi
+  # get number of targets to build
+  UBOOT_TARGET_CNT=0
+  for UBOOT_TARGET in $UBOOT_CONFIG; do
+    UBOOT_TARGET_CNT=$((UBOOT_TARGET_CNT + 1))
+  done
+
+  for UBOOT_TARGET in $UBOOT_CONFIG; do
+    if [ "$PROJECT" = "Odroid_C2" ]; then
+      export PATH=$ROOT/$TOOLCHAIN/lib/gcc-linaro-aarch64-elf/bin/:$ROOT/$TOOLCHAIN/lib/gcc-linaro-arm-eabi/bin/:$PATH
+      CROSS_COMPILE=aarch64-elf- ARCH=arm CFLAGS="" LDFLAGS="" make mrproper
+      CROSS_COMPILE=aarch64-elf- ARCH=arm CFLAGS="" LDFLAGS="" make $UBOOT_TARGET
+      CROSS_COMPILE=aarch64-elf- ARCH=arm CFLAGS="" LDFLAGS="" make HOSTCC="$HOST_CC" HOSTSTRIP="true"
+    else
+      make CROSS_COMPILE="$TARGET_PREFIX" ARCH=arm mrproper
+      make CROSS_COMPILE="$TARGET_PREFIX" ARCH=arm $UBOOT_TARGET
+      make CROSS_COMPILE="$TARGET_PREFIX" ARCH=arm HOSTCC="$HOST_CC" HOSTSTRIP="true"
+    fi
+
+    # rename files in case of multiple targets
+    if [ $UBOOT_TARGET_CNT -gt 1 ]; then
+      if [ "$UBOOT_TARGET" = "mx6_cubox-i_config" ]; then
+        TARGET_NAME="cuboxi"
+      elif [ "$UBOOT_TARGET" = "matrix" ]; then
+        TARGET_NAME="matrix"
+      elif [ "$UBOOT_TARGET" = "udoo_config" ]; then
+        TARGET_NAME="udoo"
+      elif [ "$UBOOT_TARGET" = "orangepi_2_defconfig" ]; then
+        TARGET_NAME="opi2"
+      elif [ "$UBOOT_TARGET" = "orangepi_pc_defconfig" ]; then
+        TARGET_NAME="opipc"
+      elif [ "$UBOOT_TARGET" = "orangepi_plus_defconfig" ]; then
+        TARGET_NAME="opiplus"
+      elif [ "$UBOOT_TARGET" = "orangepi_one_defconfig" ]; then
+        TARGET_NAME="opione"
+      elif [ "$UBOOT_TARGET" = "orangepi_lite_defconfig" ]; then
+        TARGET_NAME="opilite"
+      elif [ "$UBOOT_TARGET" = "Sinovoip_BPI_M2_plus_defconfig" ]; then
+        TARGET_NAME="bpim2p"
+      elif [ "$UBOOT_TARGET" = "orangepi_plus2e_defconfig" ]; then
+        TARGET_NAME="opiplus2e"
+      elif [ "$UBOOT_TARGET" = "orangepi_pc_plus_defconfig" ]; then
+        TARGET_NAME="opipcplus"
+      elif [ "$UBOOT_TARGET" = "Sinovoip_BPI_M3_defconfig" ]; then
+        TARGET_NAME="bpim3"
+      elif [ "$UBOOT_TARGET" = "beelink_x2_defconfig" ]; then
+        TARGET_NAME="bx2"  
+      else
+        TARGET_NAME="undef"
+      fi
+      if [ -f "$PROJECT_DIR/$PROJECT/logo/splash-$TARGET_NAME.bmp" ]; then
+         LOGOIMG="$PROJECT_DIR/$PROJECT/logo/splash-$TARGET_NAME.bmp"
+      elif [ -f "$PROJECT_DIR/$PROJECT/logo/splash.bmp" ]; then
+         LOGOIMG="$PROJECT_DIR/$PROJECT/logo/splash.bmp"
+      fi
+      make CROSS_COMPILE="$TARGET_PREFIX" ARCH="$TARGET_ARCH" mrproper
+      make CROSS_COMPILE="$TARGET_PREFIX" ARCH="$TARGET_ARCH" $UBOOT_TARGET
+      make CROSS_COMPILE="$TARGET_PREFIX" ARCH="$TARGET_ARCH" HOSTCC="$HOST_CC" HOSTSTRIP="true" LOGO_BMP="$LOGOIMG"
+
+      [ -f u-boot.img ] && mv u-boot.img u-boot-$TARGET_NAME.img || :
+      [ -f u-boot.imx ] && mv u-boot.imx u-boot-$TARGET_NAME.imx || :
+      [ -f u-boot-sunxi-with-spl.bin ] && mv u-boot-sunxi-with-spl.bin uboot-sunxi-$TARGET_NAME.bin || :
+      [ -f SPL ] && mv SPL SPL-$TARGET_NAME || :
+    fi
+     [ -f u-boot-sunxi-with-spl.bin ] && mv u-boot-sunxi-with-spl.bin uboot-sunxi-bpim3.bin || :
+  done
 }
 
 makeinstall_target() {
+  mkdir -p $ROOT/$TOOLCHAIN/bin
+    if [ -f build/tools/mkimage ]; then
+      cp build/tools/mkimage $ROOT/$TOOLCHAIN/bin
+    else
+      cp tools/mkimage $ROOT/$TOOLCHAIN/bin
+    fi
+
+  BOOT_CFG="$PROJECT_DIR/$PROJECT/bootloader/boot.cfg"
+  if [ -r "$BOOT_CFG" ]; then
+    cp $BOOT_CFG boot.cfg
+    mkimage -A "$TARGET_ARCH" \
+            -O u-boot \
+            -T script \
+            -C none \
+            -n "$DISTRONAME Boot" \
+            -d boot.cfg \
+            $UBOOT_CONFIGFILE
+  fi
+
   mkdir -p $INSTALL/usr/share/bootloader
 
-    # Only install u-boot.img et al when building a board specific image
-    if [ -n "$UBOOT_SYSTEM" ]; then
-      find_file_path bootloader/install && . ${FOUND_PATH}
-    fi
+  cp $ROOT/$PKG_BUILD/u-boot*.imx $INSTALL/usr/share/bootloader 2>/dev/null || :
+  
+  #NOTE: sunxi u-boot build folder contains intermediate .img files which are not needed
+  if [ -f ./uboot-sunxi-opi2.bin -o -f ./uboot-sunxi-bpim3.bin ]; then
+   cp ./uboot-sunxi-*.bin $INSTALL/usr/share/bootloader 2>/dev/null
+  else
+  cp $ROOT/$PKG_BUILD/u-boot*.img $INSTALL/usr/share/bootloader 2>/dev/null || :
+  fi
+  cp $ROOT/$PKG_BUILD/SPL* $INSTALL/usr/share/bootloader 2>/dev/null || :
 
-    # Always install the update script
-    find_file_path bootloader/update.sh && cp -av ${FOUND_PATH} $INSTALL/usr/share/bootloader
+  cp $ROOT/$PKG_BUILD/$UBOOT_CONFIGFILE $INSTALL/usr/share/bootloader 2>/dev/null || :
 
-    # Always install the canupdate script
-    if find_file_path bootloader/canupdate.sh; then
-      cp -av ${FOUND_PATH} $INSTALL/usr/share/bootloader
-      sed -e "s/@PROJECT@/${DEVICE:-$PROJECT}/g" \
-          -i $INSTALL/usr/share/bootloader/canupdate.sh
-    fi
+  cp -PR $PROJECT_DIR/$PROJECT/bootloader/uEnv*.txt $INSTALL/usr/share/bootloader 2>/dev/null || :
+
+  case $PROJECT in
+    Odroid_C2)
+      cp -PRv $PKG_DIR/scripts/update-c2.sh $INSTALL/usr/share/bootloader/update.sh
+      cp -PRv $ROOT/$PKG_BUILD/u-boot.bin $INSTALL/usr/share/bootloader/u-boot
+      if [ -f $PROJECT_DIR/$PROJECT/splash/boot-logo.bmp.gz ]; then
+        cp -PRv $PROJECT_DIR/$PROJECT/splash/boot-logo.bmp.gz $INSTALL/usr/share/bootloader
+      elif [ -f $DISTRO_DIR/$DISTRO/splash/boot-logo.bmp.gz ]; then
+        cp -PRv $DISTRO_DIR/$DISTRO/splash/boot-logo.bmp.gz $INSTALL/usr/share/bootloader
+      fi
+      ;;
+    imx6)
+      cp -PRv $PKG_DIR/scripts/update.sh $INSTALL/usr/share/bootloader
+      ;;
+     *)
+      cp -PRv $PKG_DIR/scripts/update.sh $INSTALL/usr/share/bootloader
+      ;;  
+  esac
 }

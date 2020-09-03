@@ -17,8 +17,8 @@ PKG_TOOLCHAIN="make"
 PKG_BUILD_FLAGS="-lto"
 
 if [ $PROJECT = "Amlogic" ]; then
-PKG_VERSION="b785150465048fa88f812e23462f318e66af0be0"
-PKG_SHA256="456c433f45b0e2ba15a587978234e3e1300301d431b6823747ad0e779331c97e"
+PKG_VERSION="ea1c677c1e61ce1d95809c09cf26ffa75cd7e9dc"
+#PKG_SHA256="456c433f45b0e2ba15a587978234e3e1300301d431b6823747ad0e779331c97e"
 fi
 
 pre_configure_target() {
@@ -32,6 +32,9 @@ elif [ "${PROJECT}" = "Amlogic" ]; then
 	PKG_MAKE_OPTS_TARGET+=" platform=amlogic"
 elif [ "${DEVICE}" = "OdroidGoAdvance" ]; then
 	PKG_MAKE_OPTS_TARGET+=" platform=odroidgoa"
+elif [ "${PROJECT}" = "H3" ]; then
+        PKG_MAKE_OPTS_TARGET+=" platform=armv,cortex-a7,hardfloat,neon FORCE_GLES=1"
+
 fi
 }
 

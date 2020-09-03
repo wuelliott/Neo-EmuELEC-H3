@@ -44,4 +44,5 @@ case "${1}" in
 	;;
 esac
 ## nothing was called so exit
+echo "performance" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 exit 0

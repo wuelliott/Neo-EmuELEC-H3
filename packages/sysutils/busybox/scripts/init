@@ -1006,16 +1006,16 @@ prepare_sysroot() {
 
   mount --move /flash /sysroot/flash
   mount --move /storage /sysroot/storage
-
-  if [ ! -d "/sysroot/usr/lib/kernel-overlays/base/lib/modules/$(uname -r)/" -a -f "/sysroot/usr/lib/systemd/systemd" ]; then
-    echo ""
-    echo "NEVER TOUCH boot= in syslinux.conf / cmdline.txt!"
-    echo "If you don't know what you are doing,"
-    echo "your installation is now broken."
-    echo ""
-    StartProgress countdown "Normal startup in 60s... " 60 "NOW"
-  fi
-
+  # H3
+  #if [ ! -d "/sysroot/usr/lib/kernel-overlays/base/lib/modules/$(uname -r)/" -a -f "/sysroot/usr/lib/systemd/systemd" ]; then
+  #  echo ""
+  #  echo "NEVER TOUCH boot= in syslinux.conf / cmdline.txt!"
+  #  echo "If you don't know what you are doing,"
+  #  echo "your installation is now broken."
+  #  echo ""
+  #  StartProgress countdown "Normal startup in 60s... " 60 "NOW"
+  #fi
+  # H3 END
   [ -f "/sysroot/usr/lib/systemd/systemd" ] || error "final_check" "Could not find systemd!"
 }
 

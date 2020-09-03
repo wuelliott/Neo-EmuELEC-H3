@@ -14,6 +14,16 @@ PKG_DEPENDS_INIT="toolchain"
 PKG_LONGDESC="The filesystem utilities for the EXT2 filesystem, including e2fsck, mke2fs, dumpe2fs, fsck, and others."
 PKG_BUILD_FLAGS="-parallel"
 
+if [ "$PROJECT" = "H3" ]; then
+PKG_VERSION="1.43.8"
+PKG_SITE="http://e2fsprogs.sourceforge.net/"
+PKG_URL="https://www.kernel.org/pub/linux/kernel/people/tytso/$PKG_NAME/v$PKG_VERSION/$PKG_NAME-$PKG_VERSION.tar.xz"
+PKG_DEPENDS_HOST="gcc:host"
+PKG_BUILD_FLAGS="-parallel"
+PKG_SHA256="c0841d5fe724d49132158850f3975e886fccfcef642878dca2425a1b5d30b12a"
+fi
+PKG_PATCH_DIRS="${PROJECT}"
+
 if [ "$HFSTOOLS" = "yes" ]; then
   PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET diskdev_cmds"
 fi

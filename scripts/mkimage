@@ -215,7 +215,22 @@ EOF
   if [ -d "${RELEASE_DIR}/3rdparty/bootloader/overlays" ]; then
     mcopy -s "${RELEASE_DIR}/3rdparty/bootloader/overlays" ::
   fi
+#--H3  
+elif [ "${PROJECT}" = "H3" ]; then
 
+	echo "image: copying files to part1..."
+	mcopy "${TARGET_IMG}/${BUILD_NAME}.kernel" "::/${KERNEL_NAME}"
+	mcopy "${TARGET_IMG}/${BUILD_NAME}.system" ::/SYSTEM
+	mcopy "${RELEASE_DIR}/target/KERNEL.md5" "::/${KERNEL_NAME}.md5"
+	mcopy "${RELEASE_DIR}/target/SYSTEM.md5" ::/SYSTEM.md5
+    mcopy $RELEASE_DIR/3rdparty/bootloader/boot.scr ::
+	mcopy $RELEASE_DIR/3rdparty/bootloader/$UBOOT_SYSTEM.fex ::/script.bin
+	if [ -n "$UBOOT_SYSTEM" -a -f "$RELEASE_DIR/3rdparty/bootloader/uboot-sunxi-$UBOOT_SYSTEM.bin" ]; then
+	  echo "image: dd boot bin"
+	  dd if="$RELEASE_DIR/3rdparty/bootloader/uboot-sunxi-$UBOOT_SYSTEM.bin" of="$DISK" conv=fsync,notrunc bs=1k seek=8 >"$SAVE_ERROR" 2>&1 || show_error
+    fi
+
+#--H3 END
 elif [ "${BOOTLOADER}" = "u-boot" -a \( -n "${UBOOT_SYSTEM}" -o "${UBOOT_VERSION}" = "vendor" \) ]; then
   # create bootloader configuration
   echo "image: creating bootloader configuration..."
@@ -267,9 +282,9 @@ dd if="${DISK}" of="${LE_TMP}/part2.ext4" bs=512 skip="${STORAGE_PART_START}" co
 
 # create filesystem on part2
 echo "image: creating filesystem on part2..."
-mke2fs -F -q -t ext4 -m 0 "${LE_TMP}/part2.ext4"
-tune2fs -L "${DISTRO_DISKLABEL}" -U ${UUID_STORAGE} "${LE_TMP}/part2.ext4" >"${SAVE_ERROR}" 2>&1 || show_error
-e2fsck -n "${LE_TMP}/part2.ext4" >"${SAVE_ERROR}" 2>&1 || show_error
+$TOOLCHAIN/sbin/mke2fs -F -q -t ext4 -m 0 "${LE_TMP}/part2.ext4"
+$TOOLCHAIN/sbin/tune2fs -L "${DISTRO_DISKLABEL}" -U ${UUID_STORAGE} "${LE_TMP}/part2.ext4" >"${SAVE_ERROR}" 2>&1 || show_error
+$TOOLCHAIN/sbin/e2fsck -n "${LE_TMP}/part2.ext4" >"${SAVE_ERROR}" 2>&1 || show_error
 sync
 
 # add resize mark
@@ -278,7 +293,7 @@ touch "${LE_TMP}/part2.fs/.please_resize_me"
 echo "image: populating filesystem on part2..."
 populatefs -U -d "${LE_TMP}/part2.fs" "${LE_TMP}/part2.ext4" >"${SAVE_ERROR}" 2>&1 || show_error
 sync
-e2fsck -n "${LE_TMP}/part2.ext4" >"${SAVE_ERROR}" 2>&1 || show_error
+$TOOLCHAIN/sbin/e2fsck -n "${LE_TMP}/part2.ext4" >"${SAVE_ERROR}" 2>&1 || show_error
 
 # merge part2 back to disk image
 echo "image: merging part2 back to image..."

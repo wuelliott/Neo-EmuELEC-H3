@@ -23,6 +23,12 @@ case "$LINUX" in
     PKG_URL="https://github.com/smp79/rtl8821CU/archive/$PKG_VERSION.tar.gz"
     PKG_SOURCE_DIR="rtl8821CU-$PKG_VERSION*"
     ;;
+  sun8i)
+    PKG_VERSION="178fcbf4f1bf5b94580b5708016d0b2c2ded1720"
+    PKG_SHA256="29d3e053dd1fad37ee03de65e4ed2b25a4fb9aaf8bb6bd435da477753d03ad26"
+    PKG_URL="https://github.com/smp79/rtl8821CU/archive/$PKG_VERSION.tar.gz"
+    PKG_SOURCE_DIR="rtl8821CU-$PKG_VERSION*"
+    ;;
 esac
 
 pre_make_target() {

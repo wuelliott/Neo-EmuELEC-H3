@@ -2,22 +2,14 @@
 # Copyright (C) 2018-present 5schatten (https://github.com/5schatten)
 
 PKG_NAME="SDL2-git"
-PKG_VERSION="2.0.9" # 2.0.9 Do not update!
-PKG_SHA256="255186dc676ecd0c1dbf10ec8a2cc5d6869b5079d8a38194c2aecdff54b324b1"
+PKG_VERSION="b5e5778aabc8b69b6269255f5642881e62a6897b" # 2.0.9 Do not update!
+PKG_SHA256="57a090ffac6d16e7d1631e9eef62c6918727eb1b5ac1993bdc8244d943893e23"
+PKG_GIT_CLONE_BRANCH="mali-2.0.9"
 PKG_LICENSE="GPL"
-PKG_SITE="https://www.libsdl.org/"
-PKG_URL="https://www.libsdl.org/release/SDL2-$PKG_VERSION.tar.gz"
+PKG_SITE="https://github.com/RetroPie/SDL-mirror"
+PKG_URL="$PKG_SITE/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain alsa-lib systemd dbus $OPENGLES pulseaudio"
 PKG_LONGDESC="Simple DirectMedia Layer is a cross-platform development library designed to provide low level access to audio, keyboard, mouse, joystick, and graphics hardware."
-
-if [ ${PROJECT} = "Amlogic-ng" ] || [ ${PROJECT} = "Amlogic" ]; then
-  PKG_PATCH_DIRS="Amlogic"
-fi
-
-if [ "$DEVICE" == "OdroidGoAdvance" ]; then
-  PKG_PATCH_DIRS="OdroidGoAdvance"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET libdrm mali-bifrost librga"
-fi
 
 pre_configure_target(){
   PKG_CMAKE_OPTS_TARGET="-DSDL_STATIC=OFF \
@@ -62,13 +54,10 @@ pre_configure_target(){
                          -DRENDER_D3D=OFF \
                          -DVIDEO_X11=OFF \
                          -DVIDEO_OPENGLES=ON \
+                         -DVIDEO_MALI=ON \
                          -DVIDEO_VULKAN=OFF \
+                         -DVIDEO_KMSDRM=OFF \
                          -DPULSEAUDIO=ON"
-if [ "$DEVICE" == "OdroidGoAdvance" ]; then
-PKG_CMAKE_OPTS_TARGET="$PKG_CMAKE_OPTS_TARGET -DVIDEO_KMSDRM=ON"
-else
-PKG_CMAKE_OPTS_TARGET="$PKG_CMAKE_OPTS_TARGET -DVIDEO_MALI=ON -DVIDEO_KMSDRM=OFF"
-fi
 }
 
 post_makeinstall_target() {

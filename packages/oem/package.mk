@@ -6,6 +6,10 @@ PKG_VERSION=""
 PKG_LICENSE="various"
 PKG_SITE="http://www.libreelec.tv"
 PKG_URL=""
-PKG_DEPENDS_TARGET="toolchain $PROJECT"
+PKG_DEPENDS_TARGET="toolchain $PROJECT "
 PKG_SECTION="virtual"
 PKG_LONGDESC="OEM: Metapackage for various OEM packages"
+
+if [ "$PROJECT" = "H3" ]; then
+PKG_DEPENDS_TARGET="toolchain"
+fi

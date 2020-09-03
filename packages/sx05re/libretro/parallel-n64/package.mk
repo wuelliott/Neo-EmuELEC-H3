@@ -21,6 +21,9 @@ if [ "${DEVICE}" == "OdroidGoAdvance" ]; then
 PKG_MAKE_OPTS_TARGET=" platform=Odroidgoa"
 fi
 
+if [ ${PROJECT} = "H3" ]; then
+PKG_MAKE_OPTS_TARGET=" platform=classic_armv7_a7 FORCE_GLES=1 ARCH=arm"
+fi
 makeinstall_target() {
   mkdir -p $INSTALL/usr/lib/libretro
   cp parallel_n64_libretro.so $INSTALL/usr/lib/libretro/
