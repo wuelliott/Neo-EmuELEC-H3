@@ -43,9 +43,9 @@ sx05re-kodi*.log
 packages/sx05re/experimental/
 
 #H3 changes
-#packages/linux-drivers/RTL8812AU
-#packages/linux-drivers/RTL8192DU
-#packages/sysutils/systemd
-#packages/tools/u-boot
-
+packages/linux-drivers/RTL8812AU
+packages/linux-drivers/RTL8192DU
+packages/sysutils/systemd
+packages/tools/u-boot
+scripts/
 
