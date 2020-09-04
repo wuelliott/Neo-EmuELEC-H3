@@ -42,9 +42,11 @@ pre_configure_target() {
  cd ${PKG_BUILD}
   if [ "${PROJECT}" = "Amlogic-ng" ]; then
     PKG_MAKE_OPTS_TARGET+=" platform=rpi4"
-  else
+  elif [ "${PROJECT}" = "Amlogic" ]; then
     PKG_MAKE_OPTS_TARGET+=" platform=rpi3"
-    fi
+  else
+    PKG_MAKE_OPTS_TARGET+=" platform=classic_armv7_a7"
+  fi
 }
 
 makeinstall_target() {
