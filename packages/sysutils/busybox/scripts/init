@@ -941,14 +941,17 @@ check_update() {
 
   # Verify that the new update is compatible with the current system - this should avoid creating
   # non-booting systems after (for example) an RPi tar is incorrectly applied to an RPi2 system.
-  if [ ! -f "$UPDATE_ROOT/.nocompat" ]; then
-    if ! check_is_compatible "$UPDATE_FILENAME"; then
-      do_cleanup
-      StartProgress countdown "Normal startup in 60s... " 60 "NOW"
-      return 0
-    fi
-  fi
-
+  
+  #--- H3
+  #if [ ! -f "$UPDATE_ROOT/.nocompat" ]; then
+  #  if ! check_is_compatible "$UPDATE_FILENAME"; then
+  #    do_cleanup
+  #    StartProgress countdown "Normal startup in 60s... " 60 "NOW"
+  #    return 0
+  #  fi
+  #fi
+  #--H3 END
+  
   # get sizes
   FLASH_FREE=$(df /flash/ | awk '/[0-9]%/{print $4}')
   FLASH_FREE=$(( $FLASH_FREE * 1024 ))
@@ -1239,8 +1242,7 @@ for BOOT_STEP in \
     mount_sysroot \
     mount_storage \
     check_update \
-    prepare_sysroot \
-    check_amlogic_dtb; do
+    prepare_sysroot ; do
   $BOOT_STEP
   [ -n "$DEBUG" ] && break_after $BOOT_STEP
 done
