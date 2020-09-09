@@ -48,4 +48,4 @@ packages/linux-drivers/RTL8192DU
 packages/sysutils/systemd
 packages/tools/u-boot
 scripts/
-
+old_packages/
