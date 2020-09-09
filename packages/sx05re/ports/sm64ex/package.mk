@@ -27,6 +27,6 @@ make_target() {
 }
 
 makeinstall_target() {
-	mkdir -p $INSTALL/usr/bin/sm64ex/
-	cp $PKG_BUILD/build/us_pc/*.arm $INSTALL/usr/bin/sm64ex/
+	mkdir -p $INSTALL/usr/config/emuelec/bin
+	cp $PKG_BUILD/build/us_pc/sm64.us.f3dex2e.arm $INSTALL/usr/config/emuelec/bin/sm64ex
 }
