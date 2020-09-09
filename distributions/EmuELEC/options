@@ -222,7 +222,7 @@
   GET_HANDLER_SUPPORT="archive"
 
 # Partition labels for USB/SD installation media
-  DISTRO_BOOTLABEL="EMUELEC"
+  DISTRO_BOOTLABEL="EMUELEC-H3"
   DISTRO_DISKLABEL="STORAGE"
 
 # Settings package name - blank if not required
