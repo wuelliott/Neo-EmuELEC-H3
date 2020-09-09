@@ -12,6 +12,7 @@ export PULSE_RUNTIME_PATH=/run/pulse
     RR_PA_TSCHED="true"
     RR_AUDIO_VOLUME="100"
     RR_AUDIO_BACKEND="PulseAudio"
+    AUDIODEV="hw:$(get_ee_setting ee_audio_device)"
 	
 
 pulseaudio_sink_load() {
