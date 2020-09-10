@@ -16,7 +16,7 @@
 # It seems some slow SDcards have a problem creating the symlink on time :/
 CONFIG_DIR="/storage/.emulationstation"
 CONFIG_DIR2="/storage/.config/emulationstation"
-
+EE_DEVICE=$(cat /ee_arch)
 if [ ! -L "$CONFIG_DIR" ]; then
 ln -sf $CONFIG_DIR2 $CONFIG_DIR
 fi
@@ -47,17 +47,17 @@ fi
 
 # Set video mode, this has to be done before starting ES
 DEFE=$(get_ee_setting ee_videomode)
+if [ "$EE_DEVICE" != "H3" ]; then
+	if [ "${DEFE}" != "Custom" ]; then
+		[ ! -z "${DEFE}" ] && echo "${DEFE}" > /sys/class/display/mode
+	fi 
 
-if [ "${DEFE}" != "Custom" ]; then
-    [ ! -z "${DEFE}" ] && echo "${DEFE}" > /sys/class/display/mode
-fi 
-
-if [ -s "/storage/.config/EE_VIDEO_MODE" ]; then
-        echo $(cat /storage/.config/EE_VIDEO_MODE) > /sys/class/display/mode
-elif [ -s "/flash/EE_VIDEO_MODE" ]; then
-        echo $(cat /flash/EE_VIDEO_MODE) > /sys/class/display/mode
+	if [ -s "/storage/.config/EE_VIDEO_MODE" ]; then
+			echo $(cat /storage/.config/EE_VIDEO_MODE) > /sys/class/display/mode
+	elif [ -s "/flash/EE_VIDEO_MODE" ]; then
+			echo $(cat /flash/EE_VIDEO_MODE) > /sys/class/display/mode
+	fi
 fi
-
 # finally we correct the FB according to video mode
 /emuelec/scripts/setres.sh
 
