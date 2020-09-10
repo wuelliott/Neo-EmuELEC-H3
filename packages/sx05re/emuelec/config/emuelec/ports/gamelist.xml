@@ -180,4 +180,16 @@
 		<developer>World Tree Games</developer>
 		<publisher>Epic MegaGames</publisher>
 	</game>
+	<game>
+		<path>./sm64ex.sh</path>
+		<name>Super Mario 64 PC Port</name>
+		<desc>Super Mario 64 PC Port.</desc>
+		<image>./images/sm64ex.png</image>
+		<video>./videos/system-opentyrian.mp4</video>
+		<thumbnail>./images/sm64ex.png</thumbnail>
+		<rating>10</rating>
+		<releasedate>2020</releasedate>
+		<developer></developer>
+		<publisher></publisher>
+	</game>
 </gameList>
