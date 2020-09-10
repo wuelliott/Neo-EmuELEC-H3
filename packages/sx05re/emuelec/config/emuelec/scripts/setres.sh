@@ -4,6 +4,13 @@
 # Copyright (C) 2019-present Shanti Gilbert (https://github.com/shantigilbert)
 
 # Read the video output mode and set it for emuelec to avoid video flicking.
+
+EE_DEVICE=$(cat /ee_arch)
+if [ "$EE_DEVICE" == "H3" ]; then
+		exit 1
+fi
+
+
 MODE=`cat /sys/class/display/mode`;
 
 if [ -e /proc/device-tree/t82x@d00c0000/compatible ]; then
