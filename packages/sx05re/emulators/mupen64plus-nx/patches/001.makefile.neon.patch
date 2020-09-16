@@ -1,0 +1,43 @@
+diff -Naur old/Makefile.common new/Makefile.common
+--- old/Makefile.common	2020-07-22 01:09:55.000000000 +0800
++++ new/Makefile.common	2020-09-16 10:51:02.210930322 +0800
+@@ -397,8 +397,10 @@
+ 	$(VIDEODIR_GLIDEN64)/src/GLideNHQ/TxQuantize.cpp \
+ 	$(VIDEODIR_GLIDEN64)/src/GLideNHQ/TxReSample.cpp \
+ 	$(VIDEODIR_GLIDEN64)/src/GLideNHQ/TxTexCache.cpp \
+-	$(VIDEODIR_GLIDEN64)/src/GLideNHQ/TxUtil.cpp \
+-	$(VIDEODIR_GLIDEN64)/src/RSP_LoadMatrix.cpp
++	$(VIDEODIR_GLIDEN64)/src/GLideNHQ/TxUtil.cpp 
++	
++
++
+ 
+ ifeq ($(HAVE_THR_AL), 1)
+ CFLAGS      += -DHAVE_THR_AL
+@@ -479,18 +481,24 @@
+ ifeq ($(platform), $(filter $(platform), rpi3 rpi4 libnx))
+ 	SOURCES_CXX += $(VIDEODIR_GLIDEN64)/src/CRC32_ARMV8.cpp
+ else
++	ifeq ($(HAVE_NEON),1)
++	SOURCES_CXX += $(VIDEODIR_GLIDEN64)/src/Neon/CRC_OPT_NEON.cpp
++	else
+ 	SOURCES_CXX += $(VIDEODIR_GLIDEN64)/src/CRC_OPT.cpp
++	endif
+ endif
+ 
+ ifeq ($(HAVE_NEON),1)
+ 	SOURCES_CXX   += $(VIDEODIR_GLIDEN64)/src/Neon/3DMathNeon.cpp \
+-						  $(VIDEODIR_GLIDEN64)/src/Neon/gSPNeon.cpp
++				     $(VIDEODIR_GLIDEN64)/src/Neon/gSPNeon.cpp \
++					 $(VIDEODIR_GLIDEN64)/src/Neon/RSP_LoadMatrixNeon.cpp
+ 
+ 	SOURCES_ASM += $(LIBRETRO_COMM_DIR)/audio/conversion/float_to_s16_neon.S \
+ 						$(LIBRETRO_COMM_DIR)/audio/conversion/s16_to_float_neon.S \
+ 						$(LIBRETRO_COMM_DIR)/audio/resampler/drivers/sinc_resampler_neon.S
+ else
+-	SOURCES_CXX   += $(VIDEODIR_GLIDEN64)/src/3DMath.cpp
++	SOURCES_CXX   += $(VIDEODIR_GLIDEN64)/src/3DMath.cpp \
++					 $(VIDEODIR_GLIDEN64)/src/RSP_LoadMatrix.cpp
+ endif
+ 
+ ifneq ($(platform), ios-arm64)
