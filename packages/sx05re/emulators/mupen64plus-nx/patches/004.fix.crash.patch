@@ -1,0 +1,115 @@
+diff -Naur old/GLideN64/src/Graphics/OpenGLContext/GLFunctions.cpp new/GLideN64/src/Graphics/OpenGLContext/GLFunctions.cpp
+--- old/GLideN64/src/Graphics/OpenGLContext/GLFunctions.cpp	2019-10-28 18:13:51.000000000 +0800
++++ new/GLideN64/src/Graphics/OpenGLContext/GLFunctions.cpp	2019-10-25 19:31:29.000000000 +0800
+@@ -5,14 +5,10 @@
+ 
+ #include "GLFunctions.h"
+ 
+-// For Libretro
+ #define ASSIGN_PROC_ADR(proc_type, proc_name) ptr##proc_name = gl##proc_name
+-#define glGetProcAddress glsm_get_proc_address
+-#define GL_GET_PROC_ADR(proc_type, proc_name) ptr##proc_name = (proc_type) glGetProcAddress("gl"#proc_name)
+-#define GL_GET_PROC_ADR_EGL(proc_type, proc_name) ptr##proc_name = (proc_type) glGetProcAddress("egl"#proc_name)
+ 
+-#if 0
+ #ifdef OS_WINDOWS
++
+ #define glGetProcAddress wglGetProcAddress
+ #define GL_GET_PROC_ADR(proc_type, proc_name) ptr##proc_name = (proc_type) glGetProcAddress("gl"#proc_name)
+ 
+@@ -69,7 +65,6 @@
+ #define GL_GET_PROC_ADR(proc_type, proc_name) ptr##proc_name = (proc_type)glGetProcAddress("gl"#proc_name)
+ 
+ #endif
+-#endif // if 0
+ 
+ //GL Functions
+ PFNGLBLENDFUNCPROC ptrBlendFunc;
+@@ -209,7 +204,6 @@
+ 
+ extern "C" void initGLFunctions()
+ {
+-#if 0
+ #ifdef VC
+ 	void *gles2so = dlopen("/opt/vc/lib/libbrcmGLESv2.so", RTLD_NOW);
+ #elif defined(ODROID)
+@@ -219,7 +213,6 @@
+ #elif defined(USE_GENERIC_GLESV2)
+        void *gles2so = dlopen("/usr/lib/libGLESv2.so", RTLD_NOW);
+ #endif
+-#endif // if 0
+ 
+ #if defined(EGL) || defined(OS_IOS)
+ 	ASSIGN_PROC_ADR(PFNGLBLENDFUNCPROC, BlendFunc);
+diff -Naur old/libretro-common/glsm/glsm.c new/libretro-common/glsm/glsm.c
+--- old/libretro-common/glsm/glsm.c	2019-10-28 18:13:51.000000000 +0800
++++ new/libretro-common/glsm/glsm.c	2019-10-25 19:31:29.000000000 +0800
+@@ -27,10 +27,8 @@
+ #include <glsm/glsm.h>
+ #include <GLideN64_libretro.h>
+ 
+-#if defined(HAVE_OPENGLES)
+-#if !defined(IOS)
++#ifdef HAVE_OPENGLES
+ #include <EGL/egl.h>
+-#endif // !defined(IOS)
+ typedef void (GL_APIENTRYP PFNGLDRAWRANGEELEMENTSBASEVERTEXPROC) (GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, const void *indices, GLint basevertex);
+ typedef void (GL_APIENTRYP PFNGLBUFFERSTORAGEEXTPROC) (GLenum target, GLsizeiptr size, const void *data, GLbitfield flags);
+ typedef void (GL_APIENTRYP PFNGLMEMORYBARRIERPROC) (GLbitfield barriers);
+@@ -43,7 +41,7 @@
+ PFNGLBINDIMAGETEXTUREPROC m_glBindImageTexture;
+ PFNGLTEXSTORAGE2DMULTISAMPLEPROC m_glTexStorage2DMultisample;
+ PFNGLCOPYIMAGESUBDATAPROC m_glCopyImageSubData;
+-#endif // defined(HAVE_OPENGLES)
++#endif
+ 
+ #ifndef GL_DEPTH_CLAMP
+ #define GL_DEPTH_CLAMP                    0x864F
+@@ -2993,14 +2991,14 @@
+ #endif
+    copy_image_support = isExtensionSupported("GL_ARB_copy_image") || isExtensionSupported("GL_EXT_copy_image") || copy_image_support_version;
+ #ifdef HAVE_OPENGLES
+-   m_glDrawRangeElementsBaseVertex = (PFNGLDRAWRANGEELEMENTSBASEVERTEXPROC)glsm_get_proc_address("glDrawRangeElementsBaseVertex");
+-   m_glBufferStorage = (PFNGLBUFFERSTORAGEEXTPROC)glsm_get_proc_address("glBufferStorageEXT");
+-   m_glMemoryBarrier = (PFNGLMEMORYBARRIERPROC)glsm_get_proc_address("glMemoryBarrier");
+-   m_glBindImageTexture = (PFNGLBINDIMAGETEXTUREPROC)glsm_get_proc_address("glBindImageTexture");
+-   m_glTexStorage2DMultisample = (PFNGLTEXSTORAGE2DMULTISAMPLEPROC)glsm_get_proc_address("glTexStorage2DMultisample");
+-   m_glCopyImageSubData = (PFNGLCOPYIMAGESUBDATAPROC)glsm_get_proc_address("glCopyImageSubData");
++   m_glDrawRangeElementsBaseVertex = (PFNGLDRAWRANGEELEMENTSBASEVERTEXPROC)eglGetProcAddress("glDrawRangeElementsBaseVertex");
++   m_glBufferStorage = (PFNGLBUFFERSTORAGEEXTPROC)eglGetProcAddress("glBufferStorageEXT");
++   m_glMemoryBarrier = (PFNGLMEMORYBARRIERPROC)eglGetProcAddress("glMemoryBarrier");
++   m_glBindImageTexture = (PFNGLBINDIMAGETEXTUREPROC)eglGetProcAddress("glBindImageTexture");
++   m_glTexStorage2DMultisample = (PFNGLTEXSTORAGE2DMULTISAMPLEPROC)eglGetProcAddress("glTexStorage2DMultisample");
++   m_glCopyImageSubData = (PFNGLCOPYIMAGESUBDATAPROC)eglGetProcAddress("glCopyImageSubData");
+    if (m_glCopyImageSubData == NULL)
+-      m_glCopyImageSubData = (PFNGLCOPYIMAGESUBDATAPROC)glsm_get_proc_address("glCopyImageSubDataEXT");
++      m_glCopyImageSubData = (PFNGLCOPYIMAGESUBDATAPROC)eglGetProcAddress("glCopyImageSubDataEXT");
+ #endif
+ 
+    unsigned i;
+@@ -3328,14 +3326,6 @@
+    return hw_render.get_current_framebuffer();
+ }
+ 
+-void* glsm_get_proc_address(const char* sym)
+-{
+-   if (!hw_render.get_proc_address)
+-      return NULL;
+-   
+-   return hw_render.get_proc_address(sym);
+-}
+-
+ extern void initGLFunctions();
+ bool glsm_ctl(enum glsm_state_ctl state, void *data)
+ {
+diff -Naur old/libretro-common/include/glsm/glsm.h new/libretro-common/include/glsm/glsm.h
+--- old/libretro-common/include/glsm/glsm.h	2019-10-28 18:13:51.000000000 +0800
++++ new/libretro-common/include/glsm/glsm.h	2019-10-25 19:31:29.000000000 +0800
+@@ -111,7 +111,6 @@
+ {
+    retro_get_proc_address_t addr;
+ } glsm_ctx_proc_address_t;
+-void* glsm_get_proc_address(const char* sym);
+ 
+ typedef struct glsm_ctx_params
+ {

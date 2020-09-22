@@ -2,8 +2,7 @@
 # Copyright (C) 2019-present Shanti Gilbert (https://github.com/shantigilbert)
 
 PKG_NAME="mupen64plus-nx"
-PKG_VERSION="be9b85ad17c7bcad5de353ad22e81c7bf6d77c48"
-PKG_SHA256="8f3b82ad6fc06885f0fef084fbaf9837aed95bb7efe5e05af29e7e25537b004e"
+PKG_VERSION="08247bab6398859814c53b1bf7a4d63466f75b6a"
 PKG_REV="1"
 PKG_ARCH="arm"
 PKG_LICENSE="GPLv2"
@@ -33,7 +32,7 @@ elif [ "${PROJECT}" = "Amlogic" ]; then
 elif [ "${DEVICE}" = "OdroidGoAdvance" ]; then
 	PKG_MAKE_OPTS_TARGET+=" platform=odroidgoa"
 elif [ "${PROJECT}" = "H3" ]; then
-        PKG_MAKE_OPTS_TARGET+=" platform=armv,cortex-a7,hardfloat,neon FORCE_GLES=1"
+        PKG_MAKE_OPTS_TARGET+=" platform=h3 GLES=1 FORCE_GLES=1 HAVE_NEON=1 WITH_DYNAREC=arm USE_GENERIC_GLESV2=1"
 
 fi
 }
