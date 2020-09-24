@@ -1028,7 +1028,7 @@ get_module_dir() {
 
 # get base path to kernel modules and firmware
 get_kernel_overlay_dir() {
-  echo "usr/lib/kernel-overlays/${1:-base}"
+  echo "usr"
 }
 
 # get full path to kernel module dir
