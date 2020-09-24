@@ -39,10 +39,9 @@ case "${1}" in
 	;;
 *)
 # Any commands that you want to run after the frontend has started goes here
-
+    echo "performance" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor	
     exit 0
 	;;
 esac
 ## nothing was called so exit
-echo "performance" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 exit 0
