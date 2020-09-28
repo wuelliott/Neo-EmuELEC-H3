@@ -108,12 +108,12 @@ post_makeinstall_target() {
 
   ln -sf /storage/.config/pulse-daemon.conf.d $INSTALL/etc/pulse/daemon.conf.d
 
-	sed -e 's|#load-module module-alsa-sink|load-module module-alsa-sink device=dmixer|' -i $INSTALL/etc/pulse/default.pa
-	sed -e 's|load-module module-suspend-on-idle|#load-module module-suspend-on-idle|' -i $INSTALL/etc/pulse/default.pa
-	sed -e 's|load-module module-udev-detect|#load-module module-udev-detect|' -i $INSTALL/etc/pulse/default.pa
-	sed -e 's|load-module module-detect|#load-module module-detect|' -i $INSTALL/etc/pulse/default.pa
-	mv $INSTALL/etc/pulse/default.pa $INSTALL/usr/config
-	ln -sf /storage/.config/default.pa $INSTALL/etc/pulse/default.pa
+	#sed -e 's|#load-module module-alsa-sink|load-module module-alsa-sink device=dmixer|' -i $INSTALL/etc/pulse/default.pa
+	#sed -e 's|load-module module-suspend-on-idle|#load-module module-suspend-on-idle|' -i $INSTALL/etc/pulse/default.pa
+	#sed -e 's|load-module module-udev-detect|#load-module module-udev-detect|' -i $INSTALL/etc/pulse/default.pa
+	#sed -e 's|load-module module-detect|#load-module module-detect|' -i $INSTALL/etc/pulse/default.pa
+	#mv $INSTALL/etc/pulse/default.pa $INSTALL/usr/config
+	#ln -sf /storage/.config/default.pa $INSTALL/etc/pulse/default.pa
 }
 
 post_install() {
