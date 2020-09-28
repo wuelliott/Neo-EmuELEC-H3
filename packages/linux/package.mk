@@ -48,6 +48,22 @@ case "$LINUX" in
     PKG_SOURCE_NAME="$PKG_NAME-$LINUX-$PKG_COMMIT.tar.gz"
     PKG_SOURCE_DIR="$PKG_NAME-fslc-${PKG_COMMIT}*"
     PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET imx6-status-led imx6-soc-fan"
+  amlogic-4.9)
+    PKG_VERSION="f8226f1f1bb434f8f89b455df1f6904e9d588331"
+    PKG_SHA256="1509bdd965d533c27b62eb5d0613e0ca328ba9a34634a8f76188dd5b6e3988b1"
+    PKG_URL="https://github.com/CoreELEC/linux-amlogic/archive/$PKG_VERSION.tar.gz"
+    PKG_SOURCE_NAME="linux-$LINUX-$PKG_VERSION.tar.gz"
+    PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET aml-dtbtools:host"
+    PKG_DEPENDS_UNPACK="media_modules-aml"
+    PKG_NEED_UNPACK="$PKG_NEED_UNPACK $(get_pkg_directory media_modules-aml)"
+    PKG_BUILD_PERF="no"
+    PKG_GIT_BRANCH="amlogic-4.9"
+    ;;
+  rockchip-4.4)
+    PKG_VERSION="aa8bacf821e5c8ae6dd8cae8d64011c741659945"
+    PKG_SHA256="a2760fe89a15aa7be142fd25fb08ebd357c5d855c41f1612cf47c6e89de39bb3"
+    PKG_URL="https://github.com/rockchip-linux/kernel/archive/$PKG_VERSION.tar.gz"
+    PKG_SOURCE_NAME="linux-$LINUX-$PKG_VERSION.tar.gz"
     ;;
   imx6-4.4-xbian)
     PKG_VERSION="4.4-xbian"
