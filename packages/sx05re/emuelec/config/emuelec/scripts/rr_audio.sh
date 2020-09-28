@@ -19,6 +19,26 @@ pulseaudio_sink_load() {
 
   if [ ${RR_AUDIO_BACKEND} = "PulseAudio" ];then
   systemctl restart pulseaudio 
+  
+	EE_DEVICE=$(cat /ee_arch)
+	if [ "$EE_DEVICE" == "H3" ]; then
+        pactl load-module module-alsa-sink device="dmixer" name="temp_sink" tsched=0 > /dev/null
+        pactl set-sink-volume alsa_output.temp_sink ${RR_AUDIO_VOLUME}%	
+        if [ ! -z "$(pactl list modules short | grep module-alsa-sink)" ];then
+          echo "Set-Audio: PulseAudio module-alsa-sink loaded, setting a volume of "${RR_AUDIO_VOLUME}"%"
+          echo "Set-Audio: PulseAudio will use sink "$(pactl list sinks short)
+        else
+          echo "Set-Audio: PulseAudio module-alsa-sink failed to load"
+        fi
+		if [ -d "/storage/roms/mt32" ]; then
+			if [ -f "/storage/roms/mt32/MT32_CONTROL.ROM" -a -f "/storage/roms/mt32/MT32_PCM.ROM" ]; then
+			/usr/sbin/mt32d_armv7 -d dmixer -f /storage/roms/mt32/  >2 &1
+			fi
+		fi
+
+		exit 1
+	fi
+
     if [ "${RR_PA_TSCHED}" = "false" ]; then
       TSCHED="tsched=0"
       echo "Set-Audio: PulseAudio will disable timer-based audio scheduling"
@@ -53,7 +73,9 @@ pulseaudio_sink_load() {
 
 # Unload PulseAudio sink
 pulseaudio_sink_unload() {
-  
+  /usr/bin/pkill -f mt32d_armv7 >2 &1
+  PULSE_STATUS=$(systemctl show -p SubState --value pulseaudio)
+  if [ ${PULSE_STATUS} = "running" ]; then
   if [ ${RR_AUDIO_BACKEND} = "PulseAudio" ]; then
     if [ "${RR_PA_UDEV}" = "true" ] && [ ! -z "$(pactl list modules short | grep module-alsa-card)" ]; then
       pactl set-sink-volume "$(pactl info | grep 'Default Sink:' | cut -d ' ' -f 3)" 100%  
@@ -77,7 +99,8 @@ pulseaudio_sink_unload() {
       echo "Set-Audio: ALSA mixer restore volume to 100%"
     fi
   fi
-  systemctl stop pulseaudio 
+  systemctl stop pulseaudio
+  fi
 }
 
 # Start FluidSynth
