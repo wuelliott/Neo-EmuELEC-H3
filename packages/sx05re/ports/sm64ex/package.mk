@@ -2,7 +2,7 @@
 # Copyright (C) 2020-present Matthew Wang(https://github.com/asakous)
 
 PKG_NAME="sm64ex"
-PKG_VERSION="f5005418348cf1a53bfa75ff415a513ef0b9b273"
+PKG_VERSION="a7ea882d4ace926e18515c92bbd637bcad0b31ae"
 PKG_ARCH="any"
 PKG_LICENSE="GPL3"
 PKG_SITE="https://github.com/sm64pc/sm64ex"
