@@ -31,14 +31,16 @@ pulseaudio_sink_load() {
           echo "Set-Audio: PulseAudio module-alsa-sink failed to load"
         fi
 		if [ -d "/storage/roms/mt32" ]; then
-			if [ -f "/storage/roms/mt32/MT32_CONTROL.ROM" -a -f "/storage/roms/mt32/MT32_PCM.ROM" ]; then
-			/usr/sbin/mt32d_armv7 -d dmixer -f /storage/roms/mt32/  >2 &1
+			if [ -f "/storage/roms/mt32/MT32_CONTROL.ROM" -a -f "/storage/roms/mt32/MT32_PCM.ROM" ]; then			
+			/usr/sbin/mt32d_armv7 -i 128 -d dmixer -f /storage/roms/mt32/ > /dev/null 2>&1 &
+			elif [ -f "/storage/roms/mt32/CM32L_CONTROL.ROM" -a -f "/storage/roms/mt32/CM32L_PCM.ROM" ]; then			
+			/usr/sbin/mt32d_armv7 -i 128 -d dmixer -f /storage/roms/mt32/ > /dev/null 2>&1 &			
 			fi
 		fi
 
-		exit 1
+		
 	fi
-
+	if [ "$EE_DEVICE" != "H3" ]; then
     if [ "${RR_PA_TSCHED}" = "false" ]; then
       TSCHED="tsched=0"
       echo "Set-Audio: PulseAudio will disable timer-based audio scheduling"
@@ -68,12 +70,13 @@ pulseaudio_sink_load() {
         fi
       fi
     fi
+	fi
   fi
 }
 
 # Unload PulseAudio sink
 pulseaudio_sink_unload() {
-  /usr/bin/pkill -f mt32d_armv7 >2 &1
+  /usr/bin/pkill -f mt32d_armv7 > /dev/null 2>&1 &
   PULSE_STATUS=$(systemctl show -p SubState --value pulseaudio)
   if [ ${PULSE_STATUS} = "running" ]; then
   if [ ${RR_AUDIO_BACKEND} = "PulseAudio" ]; then
