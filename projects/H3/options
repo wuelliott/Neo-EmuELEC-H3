@@ -143,5 +143,5 @@
   # additional drivers
     ADDITIONAL_DRIVERS+=" "
 
-    ADDITIONAL_PACKAGES="emuelec libcedrus libvdpau pixman libvdpau-sunxi"
+    ADDITIONAL_PACKAGES="emuelec"
     WIREGUARD_SUPPORT="no"
