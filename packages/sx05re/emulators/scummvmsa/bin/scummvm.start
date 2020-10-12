@@ -37,6 +37,11 @@ set_audio "fluidsynth"
 $BINDIR/scummvm --fullscreen --joystick=0 $EXTRA "$GAME"
 set_audio "pulseaudio"
 ;;
+"cht") 
+set_audio "fluidsynth"
+$BINDIR/scummvmcht --fullscreen --joystick=0 $EXTRA "$GAME"
+set_audio "pulseaudio"
+;;
 "libretro") 
 /usr/bin/retroarch -L /tmp/cores/scummvm_libretro.so --config ${RATMPCONF} "$GAME"
 ;;
