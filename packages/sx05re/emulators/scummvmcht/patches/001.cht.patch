@@ -1,0 +1,367 @@
+diff -Naur old/devtools/scumm-md5.txt new/devtools/scumm-md5.txt
+--- old/devtools/scumm-md5.txt	2020-08-13 12:05:32.000000000 +0800
++++ new/devtools/scumm-md5.txt	2020-10-05 17:56:46.000000000 +0800
+@@ -212,6 +212,7 @@
+ 
+ 	c7890e038806df2bb5c0c8c6f1986ea2	-1	en	DOS	VGA	VGA	8 disk	Andrea Petrucci
+ 	15e03ffbfeddb9c2aebc13dcb2a4a8f4	8357	en	DOS	VGA	VGA	4 disk
++	8c0098f34eff42c511281673809b0e58	-1	cn	DOS	VGA	VGA	4 disk
+ 	08656dd9698ddf1023ba9bf8a195e37b	-1	en	DOS	VGA	VGA	V1.1	crossbow777
+ 	d0b531227a27c6662018d2bd05aac52a	8357	de	DOS	VGA	VGA	4 disk v1.1, 14.Feb.91	Fingolfin
+ 	66fd5ff9a810dfeb6d6bdada18221140	-1	it	DOS	VGA	VGA	4 disk	Andrea Petrucci
+@@ -294,6 +295,7 @@
+ 	2d9d46f23cb07bbc90b8ad464d3e4ff8	-1	en	Mac	-	CD	Mac bundle	Joachim Eberhard
+ 	8e9417564f33790815445b2136efa667	11915	jp	Mac	-	CD	-	Petr Maruska
+ 	e8d0697906e53fee8b7e9f5652696da8	11915	jp	DOS	-	CD	-	Petr Maruska, tracker #3017219
++	480ffcba350c1cbf23668230d994ca9d	-1	cn	DOS	-	CD	-	zh_cna
+ 
+ 	c7be10f775404fd9785a8b92a06d240c	12030	en	FM-TOWNS	FM-TOWNS	-	-	dhewg, Andrea Petrucci
+ 	4d34042713958b971cb139fba4658586	-1	jp	FM-TOWNS	FM-TOWNS	-	-	Andrea Petrucci
+diff -Naur old/engines/scumm/charset.cpp new/engines/scumm/charset.cpp
+--- old/engines/scumm/charset.cpp	2020-08-13 12:05:32.000000000 +0800
++++ new/engines/scumm/charset.cpp	2020-10-07 09:25:58.753966704 +0800
+@@ -61,6 +61,7 @@
+ 		_textSurfaceMultiplier = 2;
+ 		_useCJKMode = true;
+ #endif
++
+ 	} else if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && _language == Common::JA_JPN) {
+ #ifdef USE_RGB_COLOR
+ 		// use PC-Engine System Card, since game files don't have kanji font resources
+@@ -71,8 +72,10 @@
+ 		_cjkFont->setDrawingMode(Graphics::FontSJIS::kShadowRightMode);
+ 		_2byteWidth = _2byteHeight = 12;
+ 		_useCJKMode = true;
++
+ #endif
+ 	} else if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD && _language == Common::JA_JPN) {
++
+ 		int numChar = 1413;
+ 		_2byteWidth = 16;
+ 		_2byteHeight = 16;
+@@ -83,7 +86,7 @@
+ 		// set byte 0 to 0xFF (0x00 when loaded) to indicate that the font was not loaded
+ 		_2byteFontPtr[0] = 0xFF;
+ 	} else if ((_game.version >= 7 && (_language == Common::KO_KOR || _language == Common::JA_JPN || _language == Common::ZH_TWN)) ||
+-			   (_game.version >= 3 && _language == Common::ZH_CNA)) {
++			   (_game.version >= 3 && _language == Common::ZH_CNA) || (_language == Common::ZH_TWN)) {
+ 		int numChar = 0;
+ 		const char *fontFile = NULL;
+ 
+@@ -112,6 +115,7 @@
+ 		default:
+ 			break;
+ 		}
++		
+ 		if (fontFile && fp.open(fontFile)) {
+ 			debug(2, "Loading CJK Font");
+ 			_useCJKMode = true;
+@@ -135,6 +139,7 @@
+ 				_newLineCharacter = 0x21;
+ 				break;
+ 			case Common::ZH_CNA:
++			     //debug(2,"ZH_CNA Width");
+ 				_2byteWidth = 12;
+ 				_2byteHeight = 12;
+ 				_newLineCharacter = 0x21;
+@@ -152,10 +157,13 @@
+ 			else
+ 				error("SCUMM::Font: Could not load any font");
+ 		}
++		
+ 	}
++	
+ }
+ 
+ byte *ScummEngine::get2byteCharPtr(int idx) {
++	//debug(2,"idx in '%d'",idx);
+ 	if (_game.platform == Common::kPlatformFMTowns || _game.platform == Common::kPlatformPCEngine)
+ 		return 0;
+ 
+@@ -218,6 +226,7 @@
+ 		}
+ 	case Common::ZH_CNA:
+ 		idx = ((idx % 256) - 0xa1)* 94  + ((idx / 256) - 0xa1);
++		//debug(2,"idx out '%d'",idx);
+ 		break;
+ 	default:
+ 		idx = 0;
+@@ -602,6 +611,7 @@
+ #endif
+ 
+ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
++	//debug(2,"CharsetRendererV3 printChar");
+ 	// WORKAROUND for bug #1509509: Indy3 Mac does not show black
+ 	// characters (such as in the grail diary) if ignoreCharsetMask
+ 	// is true. See also patch #1851568.
+@@ -686,6 +696,7 @@
+ }
+ 
+ void CharsetRendererV3::drawChar(int chr, Graphics::Surface &s, int x, int y) {
++	//debug(2,"CharsetRendererV3 drawChar");
+ 	const byte *charPtr = (_vm->_useCJKMode && chr > 127) ? _vm->get2byteCharPtr(chr) : _fontPtr + chr * 8;
+ 	int width = getDrawWidthIntern(chr);
+ 	int height = getDrawHeightIntern(chr);
+@@ -720,8 +731,9 @@
+ }
+ 
+ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
++	//debug(2,"CharsetRendererClassic::printChar '%d'",chr);
+ 	VirtScreen *vs;
+-	bool is2byte = (chr >= 256 && _vm->_useCJKMode);
++	bool is2byte = (chr >= 0x80 && _vm->_useCJKMode);
+ 
+ 	assertRange(1, _curId, _vm->_numCharsets - 1, "charset");
+ 
+@@ -791,7 +803,7 @@
+ 	printCharIntern(is2byte, _charPtr, _origWidth, _origHeight, _width, _height, vs, ignoreCharsetMask);
+ 
+ 	// Original keeps glyph width and character dimensions separately
+-	if ((_vm->_language == Common::ZH_TWN || _vm->_language == Common::KO_KOR) && is2byte)
++	if ((_vm->_language == Common::ZH_TWN || _vm->_language == Common::ZH_CNA || _vm->_language == Common::KO_KOR) && is2byte)
+ 		_origWidth++;
+ 
+ 	_left += _origWidth;
+@@ -866,6 +878,7 @@
+ 			drawBits1(dstSurface, _left, drawTop, charPtr, drawTop, origWidth, origHeight);
+ 		else
+ 			drawBitsN(dstSurface, dstPtr, charPtr, *_fontPtr, drawTop, origWidth, origHeight);
++			
+ 
+ 		if (_blitAlso && vs->hasTwoBuffers) {
+ 			// FIXME: Revisiting this code, I think the _blitAlso mode is likely broken
+@@ -905,11 +918,13 @@
+ }
+ 
+ bool CharsetRendererClassic::prepareDraw(uint16 chr) {
+-	bool is2byte = (chr >= 256 && _vm->_useCJKMode);
++	//debug(2,"CharsetRendererClassic prepareDraw");
++	//debug(2,"CharsetRendererClassic prepareDraw '%d'",chr);
++	bool is2byte = (chr >= 0x80 && _vm->_useCJKMode);
+ 	if (is2byte) {
+-		if (_vm->_language == Common::KO_KOR)
++		if (_vm->_language == Common::KO_KOR) {
+ 			enableShadow(true);
+-
++		}
+ 		_charPtr = _vm->get2byteCharPtr(chr);
+ 		_width = _origWidth = _vm->_2byteWidth;
+ 		_height = _origHeight = _vm->_2byteHeight;
+@@ -921,7 +936,7 @@
+ 		}
+ 
+ 		return true;
+-	}
++	} else {
+ 
+ 	uint32 charOffs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
+ 	assert(charOffs < 0x14000);
+@@ -942,20 +957,23 @@
+ 
+ 	_charPtr += 4;	// Skip over char header
+ 	return true;
++	}
+ }
+ 
+ void CharsetRendererClassic::drawChar(int chr, Graphics::Surface &s, int x, int y) {
++	//debug(2,"drawChar '%d'",chr);
+ 	if (!prepareDraw(chr))
+ 		return;
+ 
+ 	byte *dst = (byte *)s.getBasePtr(x, y);
+ 
+-	bool is2byte = (_vm->_useCJKMode && chr >= 256);
++	bool is2byte = (_vm->_useCJKMode && chr >= 0x80);
+ 	if (is2byte)
+ 		drawBits1(s, x, y, _charPtr, y, _width, _height);
++		//drawBits1(s, dst, _charPtr, y, _width, _height, _bytesPerPixel);
+ 	else
+ 		drawBitsN(s, dst, _charPtr, *_fontPtr, y, _width, _height);
+-}
++	   }
+ 
+ void CharsetRendererClassic::drawBitsN(const Graphics::Surface &s, byte *dst, const byte *src, byte bpp, int drawTop, int width, int height) {
+ 	int y, x;
+@@ -1498,6 +1516,7 @@
+ }
+ 
+ bool CharsetRendererTownsClassic::prepareDraw(uint16 chr) {
++	//debug(2,"CharsetRendererTownsClassic prepareDraw");
+ 	processCharsetColors();
+ 	bool noSjis = false;
+ 
+diff -Naur old/engines/scumm/scumm-md5.h new/engines/scumm/scumm-md5.h
+--- old/engines/scumm/scumm-md5.h	2020-08-13 12:05:32.000000000 +0800
++++ new/engines/scumm/scumm-md5.h	2020-10-05 17:57:17.000000000 +0800
+@@ -1,5 +1,5 @@
+ /*
+-  This file was generated by the md5table tool on Tue Oct 22 12:22:35 2019
++  This file was generated by the md5table tool on Mon Oct  5 09:57:17 2020
+   DO NOT EDIT MANUALLY!
+  */
+ 
+@@ -218,6 +218,7 @@
+ 	{ "477dbafbd66a53c98416dc01aef019ad", "monkey", "EGA", "EGA", -1, Common::IT_ITA, Common::kPlatformDOS },
+ 	{ "47e041521d35c7a801bb1c010d84da9d", "freddi4", "HE 99", "Demo", -1, Common::IT_ITA, Common::kPlatformWindows },
+ 	{ "47e75b1bdcb44c78cb94883d1731ccf8", "fbear", "HE 62", "Demo", 6203, Common::EN_ANY, Common::kPlatformDOS },
++	{ "480ffcba350c1cbf23668230d994ca9d", "atlantis", "", "CD", -1, Common::ZH_CNA, Common::kPlatformDOS },
+ 	{ "48b9f04b348bc5013327753f0d12a144", "loom", "EGA", "EGA", -1, Common::ES_ESP, Common::kPlatformAmiga },
+ 	{ "49210e124e4c2b30f1290a9ef6306301", "monkey", "EGA", "EGA", 8357, Common::EN_ANY, Common::kPlatformDOS },
+ 	{ "499c958affc394f2a3868f1eb568c3ee", "freddi4", "HE 99", "Demo", -1, Common::NL_NLD, Common::kPlatformUnknown },
+@@ -416,6 +417,7 @@
+ 	{ "8aed489aba45d2b9fb8a04079c9c6e6a", "baseball", "HE CUP", "Preview", 12876596, Common::UNK_LANG, Common::kPlatformUnknown },
+ 	{ "8afb3cf9f95abf208358e984f0c9e738", "funpack", "", "", -1, Common::EN_ANY, Common::kPlatform3DO },
+ 	{ "8bdb0bf87b5e303dd35693afb9351215", "ft", "", "", -1, Common::DE_DEU, Common::kPlatformUnknown },
++	{ "8c0098f34eff42c511281673809b0e58", "monkey", "VGA", "VGA", -1, Common::ZH_CNA, Common::kPlatformDOS },
+ 	{ "8d479e36f35e80257dfc102cf4b8a912", "farm", "HE 72", "Demo", 34333, Common::EN_ANY, Common::kPlatformWindows },
+ 	{ "8dd4d590685c19bf651b5016e749ead2", "PuttTime", "HE 99", "Mini Game", 18458, Common::FR_FRA, Common::kPlatformWindows },
+ 	{ "8de13897f0121c79d29a2377159f9ad0", "socks", "HE 99", "Updated", -1, Common::EN_ANY, Common::kPlatformWindows },
+diff -Naur old/engines/scumm/string.cpp new/engines/scumm/string.cpp
+--- old/engines/scumm/string.cpp	2020-08-13 12:05:32.000000000 +0800
++++ new/engines/scumm/string.cpp	2020-10-07 09:23:11.748883433 +0800
+@@ -199,6 +199,7 @@
+ 							c += *buf++ * 256;
+ 						}
+ 					}
++					  //debug(2,"AAAAAAAAAAAAAAAAAAAA");
+ 					_charset->printChar(c, true);
+ 				}
+ 			} while (c && c != '\n');
+@@ -760,13 +761,16 @@
+ #endif
+ 		} else {
+ 			if (c & 0x80 && _useCJKMode) {
+-				if (checkSJISCode(c)) {
++				if (_language == Common::JA_JPN && !checkSJISCode(c)) {
++					c = 0x20; //not in S-JIS
++				} else {
+ 					byte *buffer = _charsetBuffer + _charsetBufPos;
+ 					c += *buffer++ * 256; //LE
+ 					_charsetBufPos = buffer - _charsetBuffer;
+ 				}
+ 			}
+ 			if (_game.version <= 3) {
++				 //debug(2,"BBBBBBBBBBBBBBB");
+ 				_charset->printChar(c, false);
+ 				_msgCount += 1;
+ 			} else {
+@@ -780,6 +784,7 @@
+ 					// Subtitles are turned off, and there is a voice version
+ 					// of this message -> don't print it.
+ 				} else {
++					 //debug(2,"XXXXXXXXXXXXXXXX");
+ 					_charset->printChar(c, false);
+ 				}
+ 			}
+@@ -971,7 +976,7 @@
+ #endif
+ 
+ void ScummEngine::drawString(int a, const byte *msg) {
+-	byte buf[270];
++byte buf[270];
+ 	byte *space;
+ 	int i, c;
+ 	byte fontHeight = 0;
+@@ -983,10 +988,6 @@
+ 
+ 	convertMessageToString(msg, buf, sizeof(buf));
+ 
+-	if (_game.version >= 4 && _game.version < 7 && _game.heversion == 0 && _language == Common::HE_ISR) {
+-		fakeBidiString(buf, false);
+-	}
+-
+ 	_charset->_top = _string[a].ypos + _screenTop;
+ 	_charset->_startLeft = _charset->_left = _string[a].xpos;
+ 	_charset->_right = _string[a].right;
+@@ -1046,32 +1047,6 @@
+ 
+ 	if (_charset->_center) {
+ 		_charset->_left -= _charset->getStringWidth(a, buf) / 2;
+-	} else if (_game.version >= 4 && _game.version < 7 && _game.heversion == 0 && _game.id != GID_SAMNMAX && _language == Common::HE_ISR) {
+-		// Ignore INDY4 verbs (but allow dialogue)
+-		if (_game.id != GID_INDY4 || buf[0] == 127) {
+-			int ll = 0;
+-			if (_game.id == GID_INDY4 && buf[0] == 127) {
+-				buf[0] = 32;
+-				ll++;
+-			}
+-
+-			// Skip control characters as they might contain '\0' which results in incorrect string width.
+-			byte *ltext = buf;
+-			while (ltext[ll] == 0xFF) {
+-				ll += 4;
+-			}
+-			byte lenbuf[270];
+-			memset(lenbuf, 0, sizeof(lenbuf));
+-			int pos = ll;
+-			while (ltext[pos]) {
+-				if ((ltext[pos] == 0xFF || (_game.version <= 6 && ltext[pos] == 0xFE)) && ltext[pos+1] == 8) {
+-					break;
+-				}
+-				pos++;
+-			}
+-			memcpy(lenbuf, ltext, pos);
+-			_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(a, lenbuf);
+-		}
+ 	}
+ 
+ 	if (!buf[0]) {
+@@ -1098,8 +1073,6 @@
+ 				}
+ 				_charset->_top += fontHeight;
+ 				break;
+-			default:
+-				break;
+ 			}
+ 		} else if ((c == 0xFF || (_game.version <= 6 && c == 0xFE)) && (_game.heversion <= 71)) {
+ 			c = buf[i++];
+@@ -1114,25 +1087,6 @@
+ 			case 8:
+ 				if (_charset->_center) {
+ 					_charset->_left = _charset->_startLeft - _charset->getStringWidth(a, buf + i);
+-				} else if (_game.version >= 4 && _game.version < 7 && _game.heversion == 0 && _language == Common::HE_ISR) {
+-					// Skip control characters as they might contain '\0' which results in incorrect string width.
+-					int ll = 0;
+-					byte *ltext = buf + i;
+-					while (ltext[ll] == 0xFF) {
+-						ll += 4;
+-					}
+-					byte lenbuf[270];
+-					memset(lenbuf, 0, sizeof(lenbuf));
+-					memcpy(lenbuf, ltext, ll);
+-					int u = ll;
+-					while (ltext[u]) {
+-						if ((ltext[u] == 0xFF || (_game.version <= 6 && ltext[u] == 0xFE)) && ltext[u + 1] == 8) {
+-							break;
+-						}
+-						u++;
+-					}
+-					memcpy(lenbuf, ltext, u);
+-					_charset->_left = _screenWidth - _charset->_startLeft - _charset->getStringWidth(a, lenbuf);
+ 				} else {
+ 					_charset->_left = _charset->_startLeft;
+ 				}
+@@ -1150,8 +1104,6 @@
+ 				else
+ 					_charset->setColor(color);
+ 				break;
+-			default:
+-				break;
+ 			}
+ 		} else {
+ 			if (a == 1 && _game.version >= 6) {
+@@ -1171,9 +1123,13 @@
+ 				}
+ 			}
+ 			if (c & 0x80 && _useCJKMode) {
+-				if (checkSJISCode(c))
++				if (_language == Common::JA_JPN && !checkSJISCode(c)) {
++					c = 0x20; //not in S-JIS
++				} else {
+ 					c += buf[i++] * 256;
++				}
+ 			}
++			//debug(2,"PPPPPPPPPPP");
+ 			_charset->printChar(c, true);
+ 			_charset->_blitAlso = false;
+ 		}
