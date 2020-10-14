@@ -14,6 +14,6 @@ makeinstall_target() {
   mkdir -p $INSTALL/usr/bin
     cp -av brcm_patchram_plus $INSTALL/usr/bin/
 
-  mkdir -p $INSTALL/$(get_kernel_overlay_dir)/lib/firmware/
-    cp -av firmware/brcm $INSTALL/$(get_kernel_overlay_dir)/lib/firmware/
+  mkdir -p $INSTALL/usr/lib/firmware/
+    cp -av firmware/brcm $INSTALL/usr/lib/firmware/
 }
