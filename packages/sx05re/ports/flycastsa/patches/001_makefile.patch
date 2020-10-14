@@ -1,0 +1,25 @@
+diff -Naur old/shell/linux/Makefile new/shell/linux/Makefile
+--- old/shell/linux/Makefile	2020-10-12 11:17:26.000000000 +0800
++++ new/shell/linux/Makefile	2020-10-12 11:32:51.659953288 +0800
+@@ -326,8 +326,8 @@
+ 	    LIBS += -L$(RZDCY_SRC_DIR)/deps/SDL2-2.0.12/x86_64-w64-mingw32/lib -lsdl2 -ldinput8  -ldxguid -ldxerr8
+ 	    LIBS += -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lsetupapi -lversion -luuid
+ 	else
+-	    CXXFLAGS += `sdl2-config --cflags` -D USE_SDL
+-	    LIBS += `sdl2-config --libs`
++	    CXXFLAGS += `$(SYSROOT_PREFIX)/usr/bin/sdl2-config --cflags` -D USE_SDL
++	    LIBS += `$(SYSROOT_PREFIX)/usr/bin/sdl2-config --libs`
+ 	endif
+ endif
+ 
+@@ -390,8 +390,8 @@
+ endif
+ 
+ ifdef USE_SDLAUDIO
+-    CXXFLAGS += `sdl2-config --cflags` -D USE_SDL_AUDIO
+-    LIBS += `sdl2-config --libs`
++    CXXFLAGS += `$(SYSROOT_PREFIX)/usr/bin/sdl2-config --cflags` -D USE_SDL_AUDIO
++    LIBS += `$(SYSROOT_PREFIX)/usr/bin/sdl2-config --libs`
+ endif
+ 
+ ifdef USE_LIBAO

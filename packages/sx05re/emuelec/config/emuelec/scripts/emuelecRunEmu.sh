@@ -150,6 +150,13 @@ case ${PLATFORM} in
 		LOGEMU="No" # ReicastSA outputs a LOT of text, only enable for debugging.
 		cp -rf /storage/.config/reicast/emu_new.cfg /storage/.config/reicast/emu.cfg
 		fi
+		if [ "$EMU" = "FLYCASTSA" ]; then
+		set_kill_keys "flycastsa"
+		sed -i "s|FLYCASTBIN=.*|FLYCASTBIN=\"/usr/bin/flycastsa\"|" /emuelec/bin/flycast.sh
+		RUNTHIS='${TBASH} /emuelec/bin/flycast.sh "${ROMNAME}"'
+		LOGEMU="No"
+		cp -rf /storage/.config/flycast/emu_new.cfg /storage/.config/flycast/emu.cfg
+		fi		
 		if [ "$EMU" = "REICASTSA_OLD" ]; then
 		set_kill_keys "reicast_old"
 		sed -i "s|REICASTBIN=.*|REICASTBIN=\"/usr/bin/reicast_old\"|" /emuelec/bin/reicast.sh
