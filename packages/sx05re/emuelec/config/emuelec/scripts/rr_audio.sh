@@ -30,14 +30,6 @@ pulseaudio_sink_load() {
         else
           echo "Set-Audio: PulseAudio module-alsa-sink failed to load"
         fi
-		if [ -d "/storage/roms/mt32" ]; then
-			if [ -f "/storage/roms/mt32/MT32_CONTROL.ROM" -a -f "/storage/roms/mt32/MT32_PCM.ROM" ]; then			
-			/usr/sbin/mt32d_armv7 -i 128 -d dmixer -f /storage/roms/mt32/ > /dev/null 2>&1 &
-			elif [ -f "/storage/roms/mt32/CM32L_CONTROL.ROM" -a -f "/storage/roms/mt32/CM32L_PCM.ROM" ]; then			
-			/usr/sbin/mt32d_armv7 -i 128 -d dmixer -f /storage/roms/mt32/ > /dev/null 2>&1 &			
-			fi
-		fi
-
 		
 	fi
 	if [ "$EE_DEVICE" != "H3" ]; then
@@ -76,7 +68,6 @@ pulseaudio_sink_load() {
 
 # Unload PulseAudio sink
 pulseaudio_sink_unload() {
-  /usr/bin/pkill -f mt32d_armv7 > /dev/null 2>&1 &
   PULSE_STATUS=$(systemctl show -p SubState --value pulseaudio)
   if [ ${PULSE_STATUS} = "running" ]; then
   if [ ${RR_AUDIO_BACKEND} = "PulseAudio" ]; then
@@ -164,22 +155,53 @@ set_RA_audiodriver() {
     fi
   fi
 }
+# H3
+mt32_service_start() {
+		if [ -d "/storage/roms/mt32" ]; then
+			if [ -f "/storage/roms/mt32/MT32_CONTROL.ROM" -a -f "/storage/roms/mt32/MT32_PCM.ROM" ]; then			
+			/usr/sbin/mt32d_armv7 -i 128 -d dmixer -f /storage/roms/mt32/ > /dev/null 2>&1 &
+			elif [ -f "/storage/roms/mt32/CM32L_CONTROL.ROM" -a -f "/storage/roms/mt32/CM32L_PCM.ROM" ]; then			
+			/usr/sbin/mt32d_armv7 -i 128 -d dmixer -f /storage/roms/mt32/ > /dev/null 2>&1 &			
+			fi
+		fi
+}
 
+mt32_service_stop() {
+/usr/bin/pkill -f mt32d_armv7 > /dev/null 2>&1 &
+}
+# H3 end
 case "$1" in
 	"pulseaudio")
 		pulseaudio_sink_unload
 		fluidsynth_service_stop
 		pulseaudio_sink_load
+		mt32_service_stop
 	;;
 	"fluidsynth")
 		pulseaudio_sink_unload
 		pulseaudio_sink_load
 		fluidsynth_service_stop
 		fluidsynth_service_start
+		mt32_service_stop
+	;;
+	"fluidsynth_mt32")
+		pulseaudio_sink_unload
+		pulseaudio_sink_load
+		fluidsynth_service_stop
+		fluidsynth_service_start
+		mt32_service_stop
+		mt32_service_start
+	;;
+	"mt32")
+		pulseaudio_sink_unload
+		fluidsynth_service_stop
+		mt32_service_stop
+		mt32_service_start
 	;;
 	"alsa")
 		pulseaudio_sink_unload
 		fluidsynth_service_stop
+		mt32_service_stop
 		RR_AUDIO_BACKEND="alsa"
 	;;
 esac
