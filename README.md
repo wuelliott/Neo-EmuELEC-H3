@@ -1,4 +1,4 @@
-# Retro emulation for H3 devices.
+# Retro emulation for Allwinner H3 devices.
 
 Base on
 # EmuELEC  
