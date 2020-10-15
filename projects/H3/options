@@ -143,5 +143,5 @@
   # additional drivers
     ADDITIONAL_DRIVERS+=" "
 
-    ADDITIONAL_PACKAGES="emuelec"
+    ADDITIONAL_PACKAGES="emuelec gpio"
     WIREGUARD_SUPPORT="no"
