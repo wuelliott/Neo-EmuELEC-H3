@@ -33,12 +33,12 @@ fi
 
 case $1 in
 "sa") 
-set_audio "fluidsynth"
+set_audio "fluidsynth_mt32"
 $BINDIR/scummvm --fullscreen --joystick=0 $EXTRA "$GAME"
 set_audio "pulseaudio"
 ;;
 "cht") 
-set_audio "fluidsynth"
+set_audio "fluidsynth_mt32"
 $BINDIR/scummvmcht --fullscreen --joystick=0 $EXTRA "$GAME"
 set_audio "pulseaudio"
 ;;
