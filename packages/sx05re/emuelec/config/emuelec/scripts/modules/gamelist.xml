@@ -108,4 +108,13 @@
 		<genre>script</genre>
 		<image>./downloaded_images/terminal.png</image>
 	</game>
+		<game>
+		<path>./99 - Enable_Disable GPIO.sh</path>
+		<name>99 - Enable_Disable GPIO.</name>
+		<desc>Start gpio service or stop gpio service</desc>
+		<developer>Matthew Wang </developer>
+		<publisher>Neo-Emuelec-H3</publisher>
+		<genre>script</genre>
+		<image>./downloaded_images/gpio.png</image>
+	</game>
 </gameList>
