@@ -49,4 +49,10 @@ make_target() {
 makeinstall_target() {
   mkdir -p $INSTALL/usr/bin
   cp reicast.elf $INSTALL/usr/bin/flycastsa
+  cp tools/reicast-joyconfig.py $INSTALL/usr/bin/flycast-joyconfig.py
+  mkdir -p $INSTALL/usr/config/emuelec/bin
+  cp -r $PKG_DIR/config/* $INSTALL/usr/config/
+  cp -r $PKG_DIR/scripts/* $INSTALL/usr/config/emuelec/bin/
 }
+
+
