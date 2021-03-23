@@ -38,9 +38,10 @@ make_host() {
 }
 
 make_target() {
+
   make clean
-  make CC="$TARGET_CC" fex2bin
-  make CC="$TARGET_CC" bin2fex
+  make CC="${CC}" fex2bin
+  make CC="${CC}" bin2fex
 }
 makeinstall_host() {
   cp -PR fex2bin $TOOLCHAIN/bin/

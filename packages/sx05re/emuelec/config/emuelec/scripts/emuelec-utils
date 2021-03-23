@@ -145,7 +145,7 @@ function resolutions() {
 	RESOLUTIONS=()
 
 	# N2 supported resolutions source : https://wiki.odroid.com/odroid-n2/application_note/software/set_display_mode
-	N2_SUPPORTED_RESOLUTIONS="480x320p60hz 640x480p60hz 720x480p60hz 720x576p50hz 800x480p60hz 1024x600p60hz 1024x768p60hz 1280x1024p60hz 1280x720p50hz 1280x720p60hz 1280x800p60hz 1360x768p60hz 1440x900p60hz 1600x1200p60hz 1600x900p60hz 1680x1050p60hz 1920x1080p24hz 1920x1080p30hz 1920x1080p50hz 1920x1080p60hz 1920x1200p60hz 2560x1080p60hz 2560x1440p60hz 2560x1600p60hz 3440x1440p60hz 3840x2160p24hz 3840x2160p25hz 3840x2160p30hz 3840x2160p50hz 3840x2160p60hz"
+	N2_SUPPORTED_RESOLUTIONS="480x320p60 640x480p60 720x480p60 720x576p50 800x480p60 1024x600p60 1024x768p60 1280x1024p60 1280x720p50 1280x720p60 1280x800p60 1360x768p60 1440x900p60 1600x1200p60 1600x900p60 1680x1050p60 1920x1080p24 1920x1080p30 1920x1080p50 1920x1080p60 3840x2160p25 3840x2160p30"
 
 	# Screen supported resolutions
 	SCREEN_SUPPORTED_RESOLUTIONS=`/usr/bin/cat /sys/class/amhdmitx/amhdmitx0/rawedid | /usr/bin/edid-decode |/usr/bin/grep "@" | sed -E "s| {0,9}VIC {0,9}[0-9]{1,2}||" | /usr/bin/awk '{print $1}' | /usr/bin/sed  's/@/p/g'|/usr/bin/tr '[:upper:]' '[:lower:]'`

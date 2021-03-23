@@ -41,6 +41,8 @@ pre_make_target() {
 
 make_target() {
   export SYSROOT_PREFIX=${SYSROOT_PREFIX}	
+  export CFLAGS="$CFLAGS -DEGL_NO_X11"
+  export CXXFLAGS="$CXXFLAGS -DEGL_NO_X11"
   cd $PKG_BUILD/shell/linux
   make CC=$CC CXX=$CXX AS=$CC STRIP=$STRIP  platform=odroid reicast.elf
 }

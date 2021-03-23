@@ -20,7 +20,7 @@ PKG_TOOLCHAIN="make"
 PKG_EXPERIMENTAL="munt quasi88 xmil np2kai hypseus"
 PKG_EMUS="$LIBRETRO_CORES advancemame PPSSPPSDL reicastsa amiberry hatarisa openbor dosbox-sdl2 mupen64plus-nx scummvmsa residualvm scummvmcht flycastsa"
 PKG_TOOLS="ffmpeg libjpeg-turbo common-shaders Skyscraper MC SDL_GameControllerDB linux-utils xmlstarlet CoreELEC-Debug-Scripts sixaxis jslisten evtest mpv poppler bluetool"
-PKG_RETROPIE_DEP="bash pyudev dialog six git dbus-python pygobject coreutils"
+PKG_RETROPIE_DEP="bash pyudev dialog six git dbus-python pygobject coreutils "
 PKG_PORTS="commander-genius devilutionX sdlpop VVVVVV bermuda hodesdl opentyrian "
 PKG_DEPENDS_TARGET+=" $PKG_TOOLS $PKG_RETROPIE_DEP $PKG_EMUS $PKG_EXPERIMENTAL emuelec-ports"
 
