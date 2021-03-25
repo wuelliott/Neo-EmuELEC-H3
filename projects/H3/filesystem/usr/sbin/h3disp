@@ -403,6 +403,8 @@ PatchScriptBin() {
 	        exit 1
 	else rm "${MyTmpFile}"
 	fi
+        sync
+
 } # PatchScriptBin
 
 Main "$@"
