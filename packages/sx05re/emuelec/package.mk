@@ -26,7 +26,7 @@ PKG_TOOLCHAIN="make"
 #PKG_DEPENDS_TARGET+=" $PKG_TOOLS $PKG_RETROPIE_DEP $PKG_EMUS $PKG_EXPERIMENTAL emuelec-ports"
 #=======
 PKG_EXPERIMENTAL="munt nestopiaCV quasi88 xmil np2kai hypseus scummvmsa scummvmcht flycastsa"
-PKG_EMUS="$LIBRETRO_CORES advancemame PPSSPPSDL amiberry hatarisa openbor dosbox-staging mupen64plus-nx scummvmsa stellasa dosbox-pure pcsx_rearmed"
+PKG_EMUS="$LIBRETRO_CORES advancemame PPSSPPSDL amiberry hatarisa openbor dosbox-staging mupen64plus-nx scummvmsa stellasa solarus dosbox-pure pcsx_rearmed"
 PKG_TOOLS="emuelec-tools"
 PKG_DEPENDS_TARGET+=" $PKG_TOOLS $PKG_EMUS $PKG_EXPERIMENTAL emuelec-ports"
 #>>>>>>> upstream/master

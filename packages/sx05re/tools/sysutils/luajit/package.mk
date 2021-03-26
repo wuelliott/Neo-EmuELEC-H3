@@ -28,7 +28,9 @@ makeinstall_host() {
 }
 
 makeinstall_target() {
-  cd .${TARGET_NAME}
+  cd .${TARGET_NAME}  
+  #dirty fixed help wanted.
+  cp -r $PKG_ORIG_SYSROOT_PREFIX/usr/include/asm ./src/
   unset CFLAGS
   [ "${ARCH}" = "arm" ] && BIT="-m32"
   make PREFIX="/usr" \
