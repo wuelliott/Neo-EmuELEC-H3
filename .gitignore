@@ -43,13 +43,15 @@ sx05re-kodi*.log
 packages/sx05re/experimental/
 
 #H3 changes
-packages/linux-drivers/RTL8812AU
-packages/linux-drivers/RTL8192DU
-packages/sysutils/systemd
-packages/tools/u-boot
-scripts/
-old_packages/
-packages/sx05re/ports/sm64ex/
-packages/sx05re/ports/sm64ex_hires/
+packages/linux-drivers/RTL8812AU/*
+packages/linux-drivers/RTL8192DU/*
+packages/sysutils/systemd/*
+packages/tools/u-boot/*
+scripts/*
+old_packages/*
+packages/sx05re/ports/sm64ex/*
+packages/sx05re/ports/sm64ex_hires/*
 packages/linux/*
 packages/sx05re/emulators/mupen64plus-nx/*
+packages/sx05re/libretro/ppsspp/*
+packages/sx05re/emulators/PPSSPPSDL/*

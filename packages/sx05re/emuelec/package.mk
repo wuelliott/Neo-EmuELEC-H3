@@ -3,7 +3,7 @@
 
 PKG_NAME="emuelec"
 PKG_VERSION=""
-PKG_REV="1"
+PKG_REV="2"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv3"
 PKG_SITE=""
@@ -16,32 +16,52 @@ PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 PKG_TOOLCHAIN="make"
 
+#<<<<<<< HEAD
 # Thanks to magicseb  Reicast SA now WORKS :D
-PKG_EXPERIMENTAL="munt quasi88 xmil np2kai hypseus"
-PKG_EMUS="$LIBRETRO_CORES advancemame PPSSPPSDL reicastsa amiberry hatarisa openbor dosbox-sdl2 mupen64plus-nx scummvmsa residualvm scummvmcht flycastsa"
-PKG_TOOLS="ffmpeg libjpeg-turbo common-shaders Skyscraper MC SDL_GameControllerDB linux-utils xmlstarlet CoreELEC-Debug-Scripts sixaxis jslisten evtest mpv poppler bluetool"
-PKG_RETROPIE_DEP="bash pyudev dialog six git dbus-python pygobject coreutils "
-PKG_PORTS="commander-genius devilutionX sdlpop VVVVVV bermuda hodesdl opentyrian "
-PKG_DEPENDS_TARGET+=" $PKG_TOOLS $PKG_RETROPIE_DEP $PKG_EMUS $PKG_EXPERIMENTAL emuelec-ports"
+#PKG_EXPERIMENTAL="munt quasi88 xmil np2kai hypseus"
+#PKG_EMUS="$LIBRETRO_CORES advancemame PPSSPPSDL reicastsa amiberry hatarisa openbor dosbox-sdl2 mupen64plus-nx scummvmsa residualvm scummvmcht flycastsa"
+#PKG_TOOLS="ffmpeg libjpeg-turbo common-shaders Skyscraper MC SDL_GameControllerDB linux-utils xmlstarlet CoreELEC-Debug-Scripts sixaxis jslisten evtest mpv poppler bluetool"
+#PKG_RETROPIE_DEP="bash pyudev dialog six git dbus-python pygobject coreutils "
+#PKG_PORTS="commander-genius devilutionX sdlpop VVVVVV bermuda hodesdl opentyrian "
+#PKG_DEPENDS_TARGET+=" $PKG_TOOLS $PKG_RETROPIE_DEP $PKG_EMUS $PKG_EXPERIMENTAL emuelec-ports"
+#=======
+PKG_EXPERIMENTAL="munt nestopiaCV quasi88 xmil np2kai hypseus scummvmsa scummvmcht flycastsa"
+PKG_EMUS="$LIBRETRO_CORES advancemame PPSSPPSDL amiberry hatarisa openbor dosbox-staging mupen64plus-nx scummvmsa stellasa dosbox-pure pcsx_rearmed"
+PKG_TOOLS="emuelec-tools"
+PKG_DEPENDS_TARGET+=" $PKG_TOOLS $PKG_EMUS $PKG_EXPERIMENTAL emuelec-ports"
+#>>>>>>> upstream/master
 
 # Removed cores for space and/or performance
-# PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET mame2015 fba4arm $LIBRETRO_EXTRA_CORES xow libretro-bash-launcher dosbox-x mba.mini.plus scraper nestopiaCV bermuda reicastsa_old stellasa"
+# PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET mame2015 fba4arm reicastsa reicastsa_old mba.mini.plus $LIBRETRO_EXTRA_CORES xow"
 
-# These packages are only meant for S922x, S905x2 and A311D devices as they run poorly on S905, S912, etc"
+# These packages are only meant for S922x, S905x2 and A311D devices as they run poorly on S905" 
 if [ "$PROJECT" == "Amlogic-ng" ]; then
 PKG_DEPENDS_TARGET+=" $LIBRETRO_S922X_CORES mame2016"
 fi
 
-if [ "$DEVICE" == "OdroidGoAdvance" ]; then
+if [ "$DEVICE" == "OdroidGoAdvance" ] || [ "$DEVICE" == "GameForce" ]; then
     PKG_DEPENDS_TARGET+=" kmscon odroidgoa-utils rs97-commander-sdl2"
     
     #we disable some cores that are not working or work poorly on OGA
     for discore in mesen-s virtualjaguar quicknes reicastsa_old reicastsa MC; do
         PKG_DEPENDS_TARGET=$(echo $PKG_DEPENDS_TARGET | sed "s|$discore||")
     done
-    PKG_DEPENDS_TARGET+=" opera yabasanshiro"
+    PKG_DEPENDS_TARGET+=" yabasanshiro"
 else
     PKG_DEPENDS_TARGET+=" fbterm"
+fi
+
+# These cores do not work, or are not needed on aarch64, this package needs cleanup :) 
+if [ "$ARCH" == "aarch64" ]; then
+for discore in munt_neon quicknes reicastsa_old reicastsa parallel-n64 pcsx_rearmed; do
+		PKG_DEPENDS_TARGET=$(echo $PKG_DEPENDS_TARGET | sed "s|$discore||")
+	done
+PKG_DEPENDS_TARGET+=" duckstation emuelec-32bit-libs"
+
+if [ "$PROJECT" == "Amlogic-ng" ]; then
+	PKG_DEPENDS_TARGET+=" dolphinSA"
+fi
+
 fi
 
 make_target() {
@@ -81,7 +101,7 @@ makeinstall_target() {
       echo "s905" > $INSTALL/ee_s905
   fi
   
-  if [ "$DEVICE" == "OdroidGoAdvance" ]; then
+  if [ "$DEVICE" == "OdroidGoAdvance" ] || [ "$DEVICE" == "GameForce" ]; then
       echo "$DEVICE" > $INSTALL/ee_arch
   else
       echo "$PROJECT" > $INSTALL/ee_arch
@@ -109,7 +129,7 @@ cp $(get_build_dir plymouth-lite)/.install_init/usr/bin/ply-image $INSTALL/usr/b
 
 post_install() {
 # Remove unnecesary Retroarch Assets and overlays
-  for i in branding glui nuklear nxrgui pkg switch wallpapers zarch COPYING; do
+  for i in branding glui nuklear nxrgui pkg/wiiu switch wallpapers zarch COPYING; do
     rm -rf "$INSTALL/usr/share/retroarch-assets/$i"
   done
   
@@ -130,9 +150,10 @@ cp -r $PKG_DIR/gamepads/* $INSTALL/etc/retroarch-joypad-autoconfig
    enable_service emuelec-disable_small_cores.service
   
 # Thanks to vpeter we can now have bash :) 
-  rm -f $INSTALL/usr/bin/{sh,bash,busybox,sort}
+  rm -f $INSTALL/usr/bin/{sh,bash,busybox,sort,wget}
   cp $(get_build_dir busybox)/.install_pkg/usr/bin/busybox $INSTALL/usr/bin
   cp $(get_build_dir bash)/.install_pkg/usr/bin/bash $INSTALL/usr/bin
+  cp $(get_build_dir wget)/.install_pkg/usr/bin/wget $INSTALL/usr/bin
   cp $(get_build_dir coreutils)/.install_pkg/usr/bin/sort $INSTALL/usr/bin
   ln -sf bash $INSTALL/usr/bin/sh
  
@@ -143,11 +164,10 @@ cp -r $PKG_DIR/gamepads/* $INSTALL/etc/retroarch-joypad-autoconfig
 CORESFILE="$INSTALL/usr/config/emulationstation/es_systems.cfg"
 
 if [ "${PROJECT}" != "Amlogic-ng" ]; then
-    if [[ ${DEVICE} == "OdroidGoAdvance" ]]; then
-        remove_cores="mesen-s quicknes REICASTSA_OLD REICASTSA mame2016"
+    if [[ ${DEVICE} == "OdroidGoAdvance" || "$DEVICE" == "GameForce" ]]; then
+        remove_cores="mesen-s quicknes REICASTSA_OLD REICASTSA mame2016 mesen"
     elif [ "${PROJECT}" == "Amlogic" ]; then
-        remove_cores="mesen-s quicknes mame2016"
-        xmlstarlet ed -L -P -d "/systemList/system[name='3do']" $CORESFILE
+        remove_cores="mesen-s quicknes mame2016 mesen"
         xmlstarlet ed -L -P -d "/systemList/system[name='saturn']" $CORESFILE
     fi
     
@@ -159,11 +179,13 @@ if [ "${PROJECT}" != "Amlogic-ng" ]; then
 fi
 
   # Remove scripts from OdroidGoAdvance build
-	if [[ ${DEVICE} == "OdroidGoAdvance" ]]; then 
-	for i in "01 - Get ES Themes" "03 - wifi" "10 - Force Update" "04 - Configure Reicast" "07 - Skyscraper" "09 - system info"; do 
+	if [[ ${DEVICE} == "OdroidGoAdvance" || "$DEVICE" == "GameForce" ]]; then 
+	for i in "01 - Get ES Themes" "03 - wifi" "10 - Force Update" "04 - Configure Reicast" "06 - Sselphs scraper" "07 - Skyscraper" "09 - system info"; do 
 	xmlstarlet ed -L -P -d "/gameList/game[name='${i}']" $INSTALL/usr/config/emuelec/scripts/modules/gamelist.xml
 	rm "$INSTALL/usr/config/emuelec/scripts/modules/${i}.sh"
 	done
 	fi 
-  
+#For automatic updates we use the buildate
+	date +"%m%d%Y" > $INSTALL/usr/buildate
+
 } 
