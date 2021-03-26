@@ -40,6 +40,7 @@ case "${1}" in
 *)
 # Any commands that you want to run after the frontend has started goes here
     #echo "performance" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+    /usr/sbin/ntpd -n -N -p tick.stdtime.gov.tw
     GPIO_STATIS=`cat /storage/.config/gpio/service.flag`
     if [[ $GPIO_STATIS == 1 ]]
 	then
