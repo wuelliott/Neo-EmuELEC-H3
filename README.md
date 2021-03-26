@@ -2,7 +2,7 @@
 
 Base on
 =======
-# EmuELEC is now aarch64 ONLY, compiling and using the ARM version (after 3.9) is no longer supported, please check out the master_32bit branch if you wish to build the 32bit version.
+# EmuELEC is now ~~aarch64~~ ONLY, compiling and using the ARM version (after 3.9) is no longer supported, please check out the master_32bit branch if you wish to build the 32bit version.
 
 # EmuELEC  
 Retro emulation for Amlogic devices.  

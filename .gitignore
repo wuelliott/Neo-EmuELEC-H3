@@ -55,3 +55,4 @@ packages/linux/*
 packages/sx05re/emulators/mupen64plus-nx/*
 packages/sx05re/libretro/ppsspp/*
 packages/sx05re/emulators/PPSSPPSDL/*
+packages/sysutils/busybox/*
