@@ -97,7 +97,7 @@ if  compgen -G /storage/.config/system.d/storage-roms*.mount > /dev/null; then
 [[ -L "/storage/roms" ]] && rm /storage/roms
     umount /storage/roms > /dev/null 2>&1
     mkdir -p /var/media/EEROMS
-    mount -t vfat "LABEL=EEROMS" /var/media/EEROMS > /dev/null 2>&1
+    mount -t vfat -o codepage=950,iocharset=utf8 "LABEL=EEROMS" /var/media/EEROMS > /dev/null 2>&1
 
     for f in /storage/.config/system.d/storage-roms*.mount; do
         systemctl enable $(basename ${f}) > /dev/null 2>&1
@@ -130,7 +130,7 @@ if /usr/bin/busybox mountpoint -q /var/media/EEROMS ; then
       rmdir /var/media/EEROMS > /dev/null 2>&1
 fi
       mkdir -p /storage/roms
-      mount -t vfat "LABEL=EEROMS" /storage/roms
+      mount -t vfat -o codepage=950,iocharset=utf8 "LABEL=EEROMS" /storage/roms
 else
 # unmount the roms partition and make a symlink to the external media, mount the roms partition in media
 
@@ -140,7 +140,7 @@ if /usr/bin/busybox mountpoint -q /storage/roms ; then
 fi
     umount /var/media/EEROMS > /dev/null 2>&1
     mkdir -p /var/media/EEROMS
-    mount -t vfat "LABEL=EEROMS" /var/media/EEROMS
+    mount -t vfat -o codepage=950,iocharset=utf8 "LABEL=EEROMS" /var/media/EEROMS
 
 # we strip the name of the file.
   PATHTOROMS=${FULLPATHTOROMS%$ROMFILE}
