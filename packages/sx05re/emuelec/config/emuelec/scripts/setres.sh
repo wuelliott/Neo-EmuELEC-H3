@@ -11,7 +11,8 @@ if [ "$EE_DEVICE" == "H3" ]; then
 fi
 
 
-MODE=`cat /sys/class/display/mode`;
+#MODE=`cat /sys/class/display/mode`;
+MODE=`/usr/bin/cat /emuelec/configs/emuelec.conf | /usr/bin/grep ee_videomode |  /usr/bin/awk -F"=" '{ print $2 }'`;
 BPP=32
 
 if [ -e /ee_s905 ]; then
@@ -26,7 +27,7 @@ case "$MODE" in
 	fbset -fb /dev/fb0 -g 1280 720 1280 1440 $BPP
 	;;
 "720p50hz")
-	echo 720p60hz > /sys/class/display/mode
+	echo 720p60 > /sys/class/display/mode
 	fbset -fb /dev/fb0 -g 1280 720 1280 1440 $BPP
 	;;
 "1080p60hz")
@@ -36,11 +37,11 @@ case "$MODE" in
 	fbset -fb /dev/fb0 -g 1920 1080 1920 2160 $BPP
 	;;
 "1080i50hz")
-	echo 1080i60hz > /sys/class/display/mode
+	echo 1080i60 > /sys/class/display/mode
 	fbset -fb /dev/fb0 -g 1920 1080 1920 2160 $BPP
 	;;
 "1080p50hz")
-	echo 1080p60hz > /sys/class/display/mode
+	echo 1080p60 > /sys/class/display/mode
 	fbset -fb /dev/fb0 -g 1920 1080 1920 2160 $BPP
 	;;
 "480cvbs")

@@ -46,15 +46,8 @@ configure_target() {
 
 make_target() {
   
-  if [ "$ARCH" == "arm" ]; then
-    make -C .. -f Makefile.libretro platform=armv6
-  elif [ "$ARCH" == "aarch64" ]; then
-    cd $PKG_BUILD
-    $PKG_BUILD/configure --platform=generic
-    make -f Makefile.libretro
-  else
-    make -C .. -f Makefile.libretro
-  fi
+    make -C .. -f Makefile.libretro platform=armv_neon_hardfloat
+
 }
 
 makeinstall_target() {

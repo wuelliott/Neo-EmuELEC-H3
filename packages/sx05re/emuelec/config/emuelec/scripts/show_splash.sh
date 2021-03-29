@@ -85,7 +85,8 @@ echo "Loading ..." > /dev/console
 PLAYER="mpv"
 fi
 
-MODE=`cat /sys/class/display/mode`;
+#MODE=`cat /sys/class/display/mode`;
+MODE=`/usr/bin/cat /emuelec/configs/emuelec.conf | /usr/bin/grep ee_videomode |  /usr/bin/awk -F"=" '{ print $2 }'`;
 case "$MODE" in
 		480*)
 			SIZE=" -x 800 -y 480 "
