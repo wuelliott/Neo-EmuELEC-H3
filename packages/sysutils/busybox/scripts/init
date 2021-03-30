@@ -1267,8 +1267,7 @@ for BOOT_STEP in \
     mount_storage \
     mount_roms \
     check_update \
-    prepare_sysroot \
-    check_amlogic_dtb; do
+    prepare_sysroot; do
   $BOOT_STEP
   [ -n "$DEBUG" ] && break_after $BOOT_STEP
 done
