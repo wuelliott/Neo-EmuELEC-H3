@@ -109,7 +109,15 @@ if [[ -f "/storage/.config/emuelec/configs/novideo" ]] && [[ ${VIDEO} != "1" ]];
 	if [ "$EE_DEVICE" == "OdroidGoAdvance" ] || [ "$EE_DEVICE" == "GameForce" ]; then
         $PLAYER "$SPLASH" > /dev/null 2>&1
     else
-        $PLAYER -fs -autoexit ${SIZE} "$SPLASH" > /dev/null 2>&1
+	EE_DEVICE=$(cat /ee_arch)
+	if [ "$EE_DEVICE" == "H3" ]; then
+                $PLAYER -fs -autoexit "$SPLASH" > /dev/null 2>&1
+
+	else
+		$PLAYER -fs -autoexit ${SIZE} "$SPLASH" > /dev/null 2>&1
+
+	fi
+
     fi
 
 	fi 
