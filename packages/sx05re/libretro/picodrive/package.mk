@@ -19,17 +19,18 @@
 ################################################################################
 
 PKG_NAME="picodrive"
-PKG_VERSION="85894ad4066396453825348105f851c6c05b6d27"
-#PKG_SHA256="a0a32ed60d8c3a51fee86f42dc2c1c01dc0203d7fc302b1407643573608742db"
+PKG_VERSION="56b24717adf4b0a43d548fad21abe3c8e1b99848"
+PKG_SHA256="775ec23ecde0a3209abe99d5970e19ac7e3b3cac7aaa94d3037e86e545699004"
 PKG_LICENSE="MAME"
-PKG_SITE="https://github.com/libretro/picodrive"
-PKG_URL="$PKG_SITE.git"
+PKG_SITE="https://github.com/irixxxx/picodrive"
+PKG_URL="$PKG_SITE/archive/$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain $PKG_NAME:host"
 PKG_DEPENDS_HOST="cyclone68000"
 PKG_LONGDESC="Fast MegaDrive/MegaCD/32X emulator"
 PKG_TOOLCHAIN="manual"
 PKG_BUILD_FLAGS="-gold"
-GET_HANDLER_SUPPORT="git"
+PKG_GIT_BRANCH="libretro"
+
 pre_build_host() {
   cp -a $(get_build_dir cyclone68000)/* $PKG_BUILD/cpu/cyclone/
 }
