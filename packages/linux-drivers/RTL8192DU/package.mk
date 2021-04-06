@@ -19,7 +19,8 @@ PKG_VERSION="9e7eb15"
 PKG_SITE="https://github.com/lwfinger/rtl8192du"
 PKG_URL="https://github.com/lwfinger/rtl8192du/archive/$PKG_VERSION.tar.gz"
 PKG_SOURCE_DIR="rtl8192du-$PKG_VERSION*"
-PKG_SHA256="aa386479291fff3e9fe341d5a682b692a7a098d833be5eaa718e1b6ecfd8e167"
+#PKG_SHA256="aa386479291fff3e9fe341d5a682b692a7a098d833be5eaa718e1b6ecfd8e167"
+PKG_SHA256="ce0d2bc2406c9ea28b27c54b92e9cbdf618b35d117467d7e133c49963457d0cc"
 fi
 PKG_PATCH_DIRS="${PROJECT}"
 pre_make_target() {
