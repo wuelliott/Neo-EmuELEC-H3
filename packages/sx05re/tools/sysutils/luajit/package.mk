@@ -14,6 +14,8 @@ PKG_GIT_CLONE_BRANCH="v2.1"
 PKG_TOOLCHAIN="manual"
 PKG_BUILD_FLAGS="+speed"
 
+# #if you can't build it . try install [apt-get install gcc-multilib]
+
 post_patch() {
   mkdir -p ${PKG_BUILD}/.${TARGET_NAME} && cp -r ${PKG_BUILD}/* $PKG_BUILD/.${TARGET_NAME}
   mkdir -p ${PKG_BUILD}/.${HOST_NAME} && cp -r ${PKG_BUILD}/* $PKG_BUILD/.${HOST_NAME}
