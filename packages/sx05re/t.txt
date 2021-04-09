@@ -1,7 +1,0 @@
-./emulators/advancemame/bin/advmame.sh
-./emuelec/config/emuelec/scripts/playvideo.sh
-./emuelec/config/emuelec/scripts/show_splash.sh
-./emuelec/config/emuelec/scripts/bezels.sh
-./emuelec/config/emuelec/scripts/setres.sh
-./emuelec/config/autostart.sh
-./emuelec-emulationstation/patches/zzz_fix_video_resolution.patch

@@ -294,3 +294,43 @@ Sonic CD:
     - '[ ! -e "/storage/roms/ports/soniccd/settings.ini" ] && cp "/emuelec/configs/sonic/settings.ini" "/storage/roms/ports/soniccd/settings.ini"'
     - cd /storage/roms/ports/soniccd/
     - ${PORT}
+
+Xash3D:
+  description: Xash3D FWGS is a fork of Xash3D Engine by Unkle Mike with extended features and crossplatform.
+  rating: 1.0
+  release_date: 1998
+  developer: FWGS
+  publisher: FWGS
+
+  init_port: true
+  port_exe: "xash3d"
+  audio: "alsa"
+  commands:
+    - if [ -d /storage/roms/xash3d/valve ]; then
+    - if [ -f /storage/roms/xash3d/valve/gameinfo.txt ]; then
+    - rm -f /storage/roms/xash3d/valve/gameinfo.txt
+    - fi
+    - if grep -q i386 /storage/roms/xash3d/valve/liblist.gam; then
+    - sed -i 's/^gamedll_linux.*/gamedll_linux "\/usr\/lib\/hl.so"/g' /storage/roms/xash3d/valve/liblist.gam
+    - elif grep -q amd64 /storage/roms/xash3d/valve/liblist.gam; then
+    - sed -i 's/^gamedll_linux.*/gamedll_linux "\/usr\/lib\/hl.so"/g' /storage/roms/xash3d/valve/liblist.gam
+    - else
+    - echo not found
+    - fi
+    - cd /storage/roms/ports/xash3d/
+    - LIBGL_FB=1 LIBGL_BATCH=1 ${PORT}
+    - fi
+    
+Sm64ex:
+  description: Super Mario 64 Port.
+  rating: 1.0
+  release_date: 1998
+  developer: Nintendo
+  publisher: Nintendo
+
+  init_port: true
+  port_exe: "sm64ex"
+  audio: "alsa"
+  commands:
+    - cd /storage/roms/ports/sm64ex/
+    - ${PORT}
