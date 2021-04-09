@@ -295,7 +295,7 @@ Sonic CD:
     - cd /storage/roms/ports/soniccd/
     - ${PORT}
 
-Xash3D:
+Half-Life:
   description: Xash3D FWGS is a fork of Xash3D Engine by Unkle Mike with extended features and crossplatform.
   rating: 1.0
   release_date: 1998
@@ -306,18 +306,22 @@ Xash3D:
   port_exe: "xash3d"
   audio: "alsa"
   commands:
-    - if [ -d /storage/roms/xash3d/valve ]; then
-    - if [ -f /storage/roms/xash3d/valve/gameinfo.txt ]; then
-    - rm -f /storage/roms/xash3d/valve/gameinfo.txt
+    - if [ -d /storage/roms/ports/xash3d/valve ]; then
+    - if [ -f /storage/roms/ports/xash3d/valve/gameinfo.txt ]; then
+    - rm -f /storage/roms/ports/xash3d/valve/gameinfo.txt
     - fi
-    - if grep -q i386 /storage/roms/xash3d/valve/liblist.gam; then
-    - sed -i 's/^gamedll_linux.*/gamedll_linux "\/usr\/lib\/hl.so"/g' /storage/roms/xash3d/valve/liblist.gam
-    - elif grep -q amd64 /storage/roms/xash3d/valve/liblist.gam; then
-    - sed -i 's/^gamedll_linux.*/gamedll_linux "\/usr\/lib\/hl.so"/g' /storage/roms/xash3d/valve/liblist.gam
+    - if [ ! -f /storage/roms/ports/xash3d/valve/cl_dlls/client_armv7hf.so ]; then
+    - cp -f /usr/lib/client_armv7hf.so /storage/roms/ports/xash3d/valve/cl_dlls/client_armv7hf.so
+    - fi
+    - if grep -q i386 /storage/roms/ports/xash3d/valve/liblist.gam; then
+    - sed -i 's/^gamedll_linux.*/gamedll_linux "\/usr\/lib\/hl.so"/g' /storage/roms/ports/xash3d/valve/liblist.gam
+    - elif grep -q amd64 /storage/roms/ports/xash3d/valve/liblist.gam; then
+    - sed -i 's/^gamedll_linux.*/gamedll_linux "\/usr\/lib\/hl.so"/g' /storage/roms/ports/xash3d/valve/liblist.gam
     - else
     - echo not found
     - fi
     - cd /storage/roms/ports/xash3d/
+    - export XASH3D_BASEDIR="$PWD"
     - LIBGL_FB=1 LIBGL_BATCH=1 ${PORT}
     - fi
     
