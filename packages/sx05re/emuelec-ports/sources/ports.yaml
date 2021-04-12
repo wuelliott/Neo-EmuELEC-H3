@@ -322,7 +322,7 @@ Half-Life:
     - fi
     - cd /storage/roms/ports/xash3d/
     - export XASH3D_BASEDIR="$PWD"
-    - LIBGL_FB=1 LIBGL_BATCH=1 ${PORT}
+    - LIBGL_FB=1 ${PORT}
     - fi
     
 Sm64ex:
