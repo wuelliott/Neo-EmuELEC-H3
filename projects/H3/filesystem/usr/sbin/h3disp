@@ -99,7 +99,7 @@ Main() {
 				HDMIMode=1
 				pll_video=54
 				;;
-			2|480p) # res
+			2|480p|480p60) # res
 				HDMIMode=2
 				pll_video=108
 				;;
@@ -107,19 +107,19 @@ Main() {
 				HDMIMode=3
 				pll_video=108
 				;;
-			4|720p50|1280x720p50) # res
+			4|720p50|1280x720p50|720p50hz) # res
 				HDMIMode=4
 				pll_video=297
 				;;
-			5|720p60|720p|1280x720p60) # res
+			5|720p60|720p|1280x720p60|720p60hz) # res
 				HDMIMode=5
 				pll_video=297
 				;;
-			6|1080i50|1920x1080i50) # res
+			6|1080i50|1920x1080i50|1080i50hz) # res
 				HDMIMode=6
 				pll_video=297
 				;;
-			7|1080i60|1080i|1920x1080i60) # res
+			7|1080i60|1080i|1920x1080i60|1080i60hz) # res
 				HDMIMode=7
 				pll_video=297
 				;;
@@ -127,11 +127,11 @@ Main() {
 				HDMIMode=8
 				pll_video=297
 				;;
-			9|1080p50|1920x1080p50) # res
+			9|1080p50|1920x1080p50|1080p50hz) # res
 				HDMIMode=9
 				pll_video=297
 				;;
-			10|1080p60|1080p|1920x1080p60) # res
+			10|1080p60|1080p|1920x1080p60|1080p60hz) # res
 				HDMIMode=10
 				pll_video=297
 				;;
@@ -306,7 +306,7 @@ ShowVideoModes() {
 	# check if stdout is a terminal...
 	if test -t 1; then
 		# see if it supports colors...
-		ncolors=$(tput colors)
+		ncolors=""
 		if test -n "$ncolors" && test $ncolors -ge 8; then
 			BOLD="$(tput bold)"
 			NC='\033[0m' # No Color
@@ -345,7 +345,8 @@ PatchScriptBin() {
 	# $2 wether HDMI-to-DVI converter should be used or not (has to be TRUE)
 	# $3 pll_video value
 	# try to find location of script.bin
-	Path2ScriptBin=/boot
+	mount -o remount,rw /flash
+	Path2ScriptBin=/flash
 	if [ ! -f "${Path2ScriptBin}/script.bin" ]; then
 		Path2ScriptBin="$(df | awk -F" " '/^\/dev\/mmcblk0p1/ {print $6}')"
 		if [ ! -f "${Path2ScriptBin}/script.bin" ]; then
@@ -356,10 +357,10 @@ PatchScriptBin() {
 	fi
 	
 	# resolve symlink to modify the original instead of the link
-	ScriptBin="$(readlink -f "${Path2ScriptBin}/script.bin")"
+	ScriptBin="${Path2ScriptBin}/script.bin"
 
 	# create temp file	
-	MyTmpFile="$(mktemp /tmp/${0##*/}.XXXXXX)"
+	MyTmpFile="/tmp/XXXXXX.script.bin.temp"
 
 	# convert script.bin to temporary fex file	
 	bin2fex <"${ScriptBin}" 2>/dev/null >"${MyTmpFile}"
@@ -402,6 +403,8 @@ PatchScriptBin() {
 	        exit 1
 	else rm "${MyTmpFile}"
 	fi
+        sync
+
 } # PatchScriptBin
 
 Main "$@"

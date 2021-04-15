@@ -18,14 +18,15 @@ sed -i "s|/roms/mame|/roms/arcade|g" $CONFIG_DIR/advmame.rc
 sed -i "s|/roms/arcade|/roms/mame|g" $CONFIG_DIR/advmame.rc
 fi 
 
-if [ "$EE_DEVICE" != "OdroidGoAdvance" ]; then
+if [ "$EE_DEVICE" != "OdroidGoAdvance" ] || [ "$DEVICE" == "GameForce" ]; then
 
 
 sed -i '/device_video_modeline/d' $CONFIG_DIR/advmame.rc
 if [ "$EE_DEVICE" == "H3" ]; then
 	echo "device_video_modeline 1920x1080_60.00 153.234 1920 1968 2121 2168 1080 1127 1130 1178 +hsync +vsync" >> $CONFIG_DIR/advmame.rc
 else
-	MODE=`cat /sys/class/display/mode`;
+	#MODE=`cat /sys/class/display/mode`;
+	MODE=`/usr/bin/cat /emuelec/configs/emuelec.conf | /usr/bin/grep ee_videomode |  /usr/bin/awk -F"=" '{ print $2 }'`;
 	case "$MODE" in
 	"720p"*)
 	if [ -f /ee_s905 ]; then

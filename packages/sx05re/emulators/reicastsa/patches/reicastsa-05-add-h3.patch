@@ -1,0 +1,30 @@
+diff -Naur old/shell/linux/Makefile new/shell/linux/Makefile
+--- old/shell/linux/Makefile	2020-10-12 10:12:43.000000000 +0800
++++ new/shell/linux/Makefile	2020-10-12 10:21:32.903961517 +0800
+@@ -208,7 +208,14 @@
+ 
+         endif
+     endif
++# ODROIDs
++else ifneq (,$(findstring h3,$(platform)))
++    MFLAGS += -marm -mfpu=neon-vfpv4 -mfloat-abi=hard -funroll-loops
++    ASFLAGS += -mfpu=neon-vfpv4 -mfloat-abi=hard
++    CFLAGS += -D TARGET_BEAGLE -D TARGET_LINUX_ARMELv7 -DARM_HARDFP -fsingle-precision-constant
++    USE_GLES := 1
+ 
++    
+ # GCW Zero
+ else ifneq (,$(findstring gcwz,$(platform)))
+     NOT_ARM := 1
+@@ -249,9 +256,9 @@
+ RZDCY_SRC_DIR = $(LOCAL_PATH)/../../core
+ include $(RZDCY_SRC_DIR)/core.mk
+ 
+-LDFLAGS += -g -Wl,-Map,$(notdir $@).map,--gc-sections -Wl,-O3 -Wl,--sort-common
++LDFLAGS += -g -Wl,-Map,$(notdir $@).map,--gc-sections -Wl,-O2 -Wl,--sort-common
+ 
+-CFLAGS += -g -O3 -D RELEASE -c -D USES_HOMEDIR #-D NO_REND
++CFLAGS += -g -O2 -D RELEASE -c -D USES_HOMEDIR #-D NO_REND
+ CFLAGS += -frename-registers -fno-strict-aliasing
+ CFLAGS += -ffast-math -ftree-vectorize
+ 

@@ -1,0 +1,12 @@
+diff -Naur old/es-app/src/ApiSystem.cpp new/es-app/src/ApiSystem.cpp
+--- old/es-app/src/ApiSystem.cpp	2021-03-25 12:48:59.000000000 +0800
++++ new/es-app/src/ApiSystem.cpp	2021-03-31 17:55:07.214293037 +0800
+@@ -683,7 +683,7 @@
+ 
+ 	VolumeControl::getInstance()->init();
+ 	AudioManager::getInstance()->init();
+-	Sound::get("/usr/share/emulationstation/resources/checksound.ogg")->play();
++	Sound::get("/storage/.emulationstation/resources/checksound.ogg")->play();
+ 
+ 	return exitcode == 0;
+ }

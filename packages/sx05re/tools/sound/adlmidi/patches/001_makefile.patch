@@ -1,0 +1,20 @@
+diff -Naur old/Makefile new/Makefile
+--- old/Makefile	2021-04-06 09:38:21.000000000 +0800
++++ new/Makefile	2021-04-06 09:43:29.233232597 +0800
+@@ -1,12 +1,14 @@
+ #CXX=i686-w64-mingw32-g++ -m64
+ #CXX=x86_64-w64-mingw32-g++ -m64 -static-libgcc -static-libstdc++
+ 
+-CXX     = g++
++#CXX     = $(CXX)
+ CXXLINK = $(CXX)
++CC := $(CC)
++CXX := $(CXX)
+ 
+ #DEBUG = -O0 -fno-inline -D_GLIBCXX_DEBUG -g -fstack-protector-all -fdata-sections -fsanitize=address
+ 
+-DEBUG=-Ofast -g -fopenmp -march=native
++DEBUG=-Ofast -g -fopenmp
+ 
+ #DEBUG += -fno-tree-vectorize
+ 
